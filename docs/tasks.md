@@ -71,12 +71,12 @@ This document tracks all development tasks for the InvoiceFlow SaaS application 
   - [ ] ✅ Pagination component
 
 ### 2.2 Layout Components Development
-- [ ] ⏳ Create layout components (/components/layout/)
-  - [ ] ⏳ AppHeader component with navigation
-  - [ ] ⏳ AppFooter component with links
-  - [ ] ⏳ Navbar component with user menu
-  - [ ] ⏳ Sidebar component with collapsible navigation
-  - [ ] ⏳ Breadcrumb component for navigation
+- [ ] ✅ Create layout components (/components/layout/)
+  - [ ] ✅ AppHeader component with navigation (moved to marketing folder)
+  - [ ] ✅ AppFooter component with links (moved to marketing folder)
+  - [ ] ✅ Navbar component with user menu (simplified to match React version)
+  - [ ] ✅ Sidebar component with collapsible navigation (simplified to match React version)
+  - [ ] ✅ Breadcrumb component for navigation (verified correct implementation)
 
 ### 2.3 Layout Templates Development
 - [ ] ⏳ Create default layout for public pages
