@@ -5,5 +5,9 @@
 </template>
 
 <script setup lang="ts">
+definePageMeta({
+  layout: 'auth'
+})
+
 // TODO: Implement forgot password page
 </script>

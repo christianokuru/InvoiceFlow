@@ -5,5 +5,9 @@
 </template>
 
 <script setup lang="ts">
+definePageMeta({
+  layout: 'dashboard'
+})
+
 // TODO: Implement history page
 </script>

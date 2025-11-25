@@ -79,11 +79,11 @@ This document tracks all development tasks for the InvoiceFlow SaaS application 
   - [ ] ✅ Breadcrumb component for navigation (verified correct implementation)
 
 ### 2.3 Layout Templates Development
-- [ ] ⏳ Create default layout for public pages
-- [ ] ⏳ Create auth layout for authentication pages
-- [ ] ⏳ Create dashboard layout with sidebar and navbar
-- [ ] ⏳ Implement responsive design for all layouts
-- [ ] ⏳ Set up layout switching based on route
+- [ ] ✅ Create default layout for public pages (uses AppHeader & AppFooter)
+- [ ] ✅ Create auth layout for authentication pages (centered content with header/footer)
+- [ ] ✅ Create dashboard layout with sidebar and navbar (matches React Layout.tsx)
+- [ ] ✅ Implement responsive design for all layouts (mobile-responsive layouts)
+- [ ] ✅ Set up layout switching based on route (definePageMeta implemented)
 
 ### 2.4 Authentication UI Development
 - [ ] ⏳ Create auth components (/components/auth/)

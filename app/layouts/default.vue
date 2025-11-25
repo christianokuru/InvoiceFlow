@@ -48,6 +48,8 @@
 
 <script setup lang="ts">
 import { ref, computed } from 'vue'
+import AppHeader from '~/components/marketing/AppHeader.vue'
+import AppFooter from '~/components/marketing/AppFooter.vue'
 
 // TODO: Replace with actual auth store
 const isAuthenticated = ref(false)

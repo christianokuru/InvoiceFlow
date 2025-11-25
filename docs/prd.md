@@ -430,16 +430,21 @@ For development reference, here is the complete Nuxt 4 folder structure for the 
 ```
 receipts/
 ├── .gitignore
+├── .env
+├── .env.example
 ├── README.md
 ├── nuxt.config.ts
 ├── package.json
+├── package-lock.json
 ├── tsconfig.json
 ├── tailwind.config.js
 ├── docs/
-│   └── prd.md
+│   ├── prd.md
+│   ├── react-ui.md
+│   ├── tasks.md
+│   └── ui-blueprint.md
 ├── public/
 │   ├── favicon.ico
-│   ├── logo.svg
 │   └── robots.txt
 ├── server/
 │   ├── api/
@@ -471,8 +476,8 @@ receipts/
 │   │   │   └── index.get.ts
 │   │   ├── payments/
 │   │   │   ├── paystack.post.ts
-│   │   │   ├── webhook.post.ts
-│   │   │   └── subscriptions.post.ts
+│   │   │   ├── subscriptions.post.ts
+│   │   │   └── webhook.post.ts
 │   │   └── upload/
 │   │       └── post.ts
 │   ├── middleware/
@@ -497,149 +502,138 @@ receipts/
 ├── app/
 │   ├── app.vue
 │   ├── error.vue
-│   └── loading.vue
-├── pages/
-│   ├── index.vue
-│   ├── about.vue
-│   ├── pricing.vue
-│   ├── contact.vue
-│   ├── auth/
-│   │   ├── login.vue
-│   │   ├── register.vue
-│   │   └── forgot-password.vue
-│   └── dashboard/
-│       ├── index.vue
-│       ├── invoices.vue
-│       ├── receipts.vue
-│       ├── clients.vue
-│       ├── history.vue
-│       ├── send.vue
-│       └── copy.vue
-├── layouts/
-│   ├── default.vue
-│   ├── auth.vue
-│   └── dashboard.vue
-├── components/
-│   ├── layout/
-│   │   ├── AppHeader.vue
-│   │   ├── AppFooter.vue
-│   │   ├── Navbar.vue
-│   │   ├── Sidebar.vue
-│   │   └── Breadcrumb.vue
-│   ├── auth/
-│   │   ├── LoginForm.vue
-│   │   ├── RegisterForm.vue
-│   │   └── PasswordResetForm.vue
-│   ├── dashboard/
-│   │   ├── DashboardStats.vue
-│   │   ├── QuickActions.vue
-│   │   ├── RecentActivity.vue
-│   │   ├── invoices/
-│   │   │   ├── InvoiceList.vue
-│   │   │   ├── InvoiceCard.vue
-│   │   │   ├── InvoiceModal.vue
-│   │   │   └── InvoiceForm.vue
-│   │   ├── receipts/
-│   │   │   ├── ReceiptList.vue
-│   │   │   ├── ReceiptCard.vue
-│   │   │   ├── ReceiptModal.vue
-│   │   │   └── ReceiptForm.vue
-│   │   ├── clients/
-│   │   │   ├── ClientList.vue
-│   │   │   ├── ClientCard.vue
-│   │   │   ├── ClientModal.vue
-│   │   │   └── ClientForm.vue
-│   │   ├── history/
-│   │   │   ├── HistoryTimeline.vue
-│   │   │   ├── HistoryItem.vue
-│   │   │   └── HistoryFilters.vue
-│   │   └── shared/
-│   │       ├── SearchInput.vue
-│   │       ├── FilterSelect.vue
-│   │       ├── StatusBadge.vue
-│   │       ├── ActionButtons.vue
-│   │       └── LoadingSpinner.vue
-│   ├── ui/
-│   │   ├── Button.vue
-│   │   ├── Input.vue
-│   │   ├── Modal.vue
-│   │   ├── Card.vue
-│   │   ├── Table.vue
-│   │   ├── Badge.vue
-│   │   ├── Dropdown.vue
-│   │   └── Pagination.vue
-│   └── marketing/
-│       ├── Hero.vue
-│       ├── Features.vue
-│       ├── Pricing.vue
-│       ├── Testimonials.vue
-│       └── CTA.vue
-├── composables/
-│   ├── useAuth.ts
-│   ├── useInvoices.ts
-│   ├── useReceipts.ts
-│   ├── useClients.ts
-│   ├── useNotifications.ts
-│   ├── usePaystack.ts
-│   └── useLocalStorage.ts
+│   ├── loading.vue
+│   ├── assets/
+│   │   └── css/
+│   │       └── main.css
+│   ├── components/
+│   │   ├── auth/
+│   │   │   ├── LoginForm.vue
+│   │   │   ├── RegisterForm.vue
+│   │   │   └── PasswordResetForm.vue
+│   │   ├── dashboard/
+│   │   │   ├── clients/
+│   │   │   ├── history/
+│   │   │   ├── invoices/
+│   │   │   ├── receipts/
+│   │   │   └── shared/
+│   │   ├── layout/
+│   │   │   ├── Breadcrumb.vue
+│   │   │   ├── Navbar.vue
+│   │   │   └── Sidebar.vue
+│   │   ├── marketing/
+│   │   │   ├── AppFooter.vue
+│   │   │   ├── AppHeader.vue
+│   │   │   ├── CTA.vue
+│   │   │   ├── Features.vue
+│   │   │   ├── Hero.vue
+│   │   │   ├── Pricing.vue
+│   │   │   └── Testimonials.vue
+│   │   └── ui/
+│   │       ├── Badge.vue
+│   │       ├── Button.vue
+│   │       ├── Card.vue
+│   │       ├── Dropdown.vue
+│   │       ├── Input.vue
+│   │       ├── Modal.vue
+│   │       ├── Pagination.vue
+│   │       └── Table.vue
+│   ├── composables/
+│   │   ├── useAuth.ts
+│   │   ├── useClients.ts
+│   │   ├── useInvoices.ts
+│   │   ├── useLocalStorage.ts
+│   │   ├── useNotifications.ts
+│   │   ├── usePaystack.ts
+│   │   └── useReceipts.ts
+│   ├── layouts/
+│   │   ├── auth.vue
+│   │   ├── dashboard.vue
+│   │   └── default.vue
+│   ├── middleware/
+│   │   ├── auth.global.ts
+│   │   └── trial.global.ts
+│   ├── pages/
+│   │   ├── about.vue
+│   │   ├── auth/
+│   │   │   ├── forgot-password.vue
+│   │   │   ├── login.vue
+│   │   │   └── register.vue
+│   │   ├── contact.vue
+│   │   ├── dashboard/
+│   │   │   ├── clients.vue
+│   │   │   ├── copy.vue
+│   │   │   ├── history.vue
+│   │   │   ├── index.vue
+│   │   │   ├── invoices.vue
+│   │   │   ├── receipts.vue
+│   │   │   └── send.vue
+│   │   ├── index.vue
+│   │   └── pricing.vue
+│   ├── plugins/
+│   │   ├── lucide.client.ts
+│   │   ├── mongoose.client.ts
+│   │   └── paystack.client.ts
+│   └── utils/
+│       ├── constants.ts
+│       ├── formatters.ts
+│       ├── helpers.ts
+│       ├── pdf-generator.ts
+│       └── validators.ts
 ├── stores/
 │   ├── auth.ts
+│   ├── clients.ts
 │   ├── invoices.ts
 │   ├── receipts.ts
-│   ├── clients.ts
 │   └── ui.ts
-├── middleware/
-│   ├── auth.global.ts
-│   └── trial.global.ts
-├── plugins/
-│   ├── mongoose.client.ts
-│   ├── paystack.client.ts
-│   └── lucide.client.ts
-├── types/
-│   ├── index.d.ts
-│   ├── auth.d.ts
-│   ├── invoice.d.ts
-│   ├── receipt.d.ts
-│   └── client.d.ts
-└── utils/
-    ├── constants.ts
-    ├── helpers.ts
-    ├── validators.ts
-    ├── formatters.ts
-    └── pdf-generator.ts
+└── types/
+    ├── auth.d.ts
+    ├── client.d.ts
+    ├── index.d.ts
+    ├── invoice.d.ts
+    └── receipt.d.ts
 ```
 
 ### Folder Structure Explanation
 
 #### **Server-Side Architecture (`/server/`)**
-- **API Routes**: RESTful endpoints for all backend operations
+- **API Routes**: RESTful endpoints for all backend operations using Nitro
 - **Models**: Mongoose schemas for MongoDB data structure
 - **Middleware**: Server-side authentication and validation
 - **Utils**: Helper functions for database, auth, email, PDF generation, and Paystack integration
 - **Types**: TypeScript definitions for server-side data structures
 
-#### **Client-Side Architecture (`/` root level)**
+#### **Client-Side Architecture (`/app/` - Nuxt 4 Structure)**
 - **Pages**: File-based routing with public pages and protected dashboard routes
 - **Layouts**: Different page layouts (public, auth, dashboard)
 - **Components**: Organized by feature and reusability
 - **Composables**: Vue 3 Composition API utilities
-- **Stores**: Pinia state management for global application state
+- **Assets**: CSS and other static assets
 - **Middleware**: Client-side route guards and global functionality
+- **Plugins**: Client-side plugin integrations
+- **Utils**: Client-side utility functions
 
 #### **Component Organization**
-- **`/layout/`**: Layout-specific components (headers, footers, navigation)
-- **`/auth/`**: Authentication-related forms and components
-- **`/dashboard/`**: Feature-specific dashboard components organized by module
-- **`/ui/`**: Reusable UI components for consistent design system
-- **`/marketing/`**: Landing page and marketing components
+- **`/app/components/layout/`**: Layout-specific components (headers, footers, navigation)
+- **`/app/components/auth/`**: Authentication-related forms and components
+- **`/app/components/dashboard/`**: Feature-specific dashboard components organized by module
+- **`/app/components/ui/`**: Reusable UI components for consistent design system
+- **`/app/components/marketing/`**: Landing page and marketing components
 
 #### **State & Logic Management**
-- **Composables**: Reusable logic and API interactions
-- **Stores**: Global state management with Pinia
-- **Middleware**: Route protection and global behaviors
+- **Composables**: Reusable logic and API interactions (located in `/app/composables/`)
+- **Stores**: Global state management with Pinia (located in root `/stores/`)
+- **Middleware**: Route protection and global behaviors (both server and client)
 - **Plugins**: Third-party integrations and global functionality
+- **Types**: Global TypeScript definitions (located in root `/types/`)
 
-This structure follows Nuxt 4 conventions while maintaining clear separation of concerns and enabling scalable development practices.
+#### **Nuxt 4 Key Differences**
+- **App Directory**: All client-side code is organized within the `/app/` directory
+- **Co-located Structure**: Components, composables, and utilities are organized within their respective domains
+- **Enhanced Modularity**: Better separation of concerns with the app directory structure
+- **Improved TypeScript Support**: Enhanced type checking with the new directory organization
+
+This structure follows Nuxt 4 conventions with the app directory pattern, maintaining clear separation of concerns and enabling scalable development practices while taking advantage of Nuxt's enhanced modularity and TypeScript support.
 
 ## 15. Conclusion
 
