@@ -2,7 +2,9 @@
 <template>
   <div id="app">
     <NuxtLayout>
-      <NuxtPage />
+      <PageTransition @transition-start="handleTransitionStart" @transition-end="handleTransitionEnd">
+        <NuxtPage />
+      </PageTransition>
     </NuxtLayout>
     <Toaster :toasts="toasts" @remove-toast="removeToast" />
   </div>
@@ -10,10 +12,47 @@
 
 <script setup>
 import { useToaster } from '~/composables/useToaster'
+import { useAccessibility } from '~/composables/useAccessibility'
+import { useMobileUX } from '~/composables/useMobileUX'
 
 // Get the toaster composable to manage toasts globally
 const { toasts, removeToast } = useToaster()
-import Toaster from '~/components/ui/Toaster.vue';
+
+// Initialize accessibility features
+const accessibility = useAccessibility()
+
+// Initialize mobile UX enhancements
+const mobileUX = useMobileUX()
+
+import Toaster from '~/components/ui/Toaster.vue'
+import PageTransition from '~/components/ui/PageTransition.vue'
+
+// Page transition handlers
+const handleTransitionStart = (type) => {
+  accessibility.announceToScreenReader(`Page transition ${type} started`, 'polite')
+}
+
+const handleTransitionEnd = (type) => {
+  accessibility.announceToScreenReader(`Page transition ${type} completed`, 'polite')
+}
+
+// Pull to refresh functionality for mobile
+const handlePullToRefresh = () => {
+  mobileUX.triggerHapticFeedback('medium')
+  accessibility.announceToScreenReader('Refreshing page...', 'assertive')
+
+  // Reload current page
+  setTimeout(() => {
+    window.location.reload()
+  }, 1000)
+}
+
+// Initialize pull to refresh on mobile
+onMounted(() => {
+  if (mobileUX.isMobile.value) {
+    mobileUX.enablePullToRefresh(handlePullToRefresh)
+  }
+})
 </script>
 
 <style>

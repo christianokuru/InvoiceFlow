@@ -18,21 +18,21 @@
       </div>
 
       <!-- Pricing Cards -->
-      <div class="grid md:grid-cols-3 gap-8 max-w-6xl mx-auto">
+      <div class="grid sm:grid-cols-3 gap-4 sm:gap-6 lg:gap-8 max-w-6xl mx-auto">
         <!-- Starter Plan -->
-        <div class="bg-white rounded-2xl shadow-lg border border-gray-200 p-8 hover:shadow-2xl transition-all duration-500 transform hover:-translate-y-3 animate-on-scroll group">
-          <div class="mb-8">
-            <h3 class="text-2xl font-bold text-gray-900 mb-2 group-hover:text-blue-600 transition-colors duration-300">Starter</h3>
-            <p class="text-gray-600 mb-6">Perfect for small businesses and freelancers</p>
-            <div class="mb-6">
-              <span class="text-4xl font-bold text-gray-900 group-hover:scale-110 transition-transform duration-300 inline-block">
+        <div class="bg-white rounded-2xl shadow-lg border border-gray-200 p-5 sm:p-6 lg:p-8 hover:shadow-2xl transition-all duration-500 transform hover:-translate-y-2 sm:hover:-translate-y-3 animate-on-scroll group h-full">
+          <div class="mb-6 sm:mb-8">
+            <h3 class="text-xl sm:text-2xl font-bold text-gray-900 mb-2 group-hover:text-blue-600 transition-colors duration-300">Starter</h3>
+            <p class="text-gray-600 mb-4 sm:mb-6 text-sm sm:text-base">Perfect for small businesses and freelancers</p>
+            <div class="mb-4 sm:mb-6">
+              <span class="text-3xl sm:text-4xl font-bold text-gray-900 group-hover:scale-110 transition-transform duration-300 inline-block">
                 $12
               </span>
-              <span class="text-gray-600 ml-1">/month</span>
+              <span class="text-gray-600 ml-1 text-sm sm:text-base">/month</span>
             </div>
             <button
               @click="handleSelectPlan('starter')"
-              class="w-full px-6 py-3 bg-white text-blue-600 border-2 border-blue-600 font-semibold rounded-lg hover:bg-blue-50 hover:scale-105 transition-all duration-300 group-hover:border-blue-700 group-hover:text-blue-700"
+              class="w-full px-4 sm:px-6 py-2.5 sm:py-3 bg-white text-blue-600 border-2 border-blue-600 font-semibold rounded-lg hover:bg-blue-50 hover:scale-105 transition-all duration-300 group-hover:border-blue-700 group-hover:text-blue-700 text-sm sm:text-base"
             >
               <span class="flex items-center justify-center gap-2">
                 Start Free Trial
@@ -41,138 +41,139 @@
             </button>
           </div>
 
-          <ul class="space-y-4">
+          <ul class="space-y-3 sm:space-y-4">
             <li class="flex items-start gap-3 group-hover:bg-blue-50 group-hover:px-2 group-hover:py-1 group-hover:rounded-lg transition-all duration-300">
-              <CheckIcon class="h-5 w-5 text-green-500 mt-0.5 flex-shrink-0 group-hover:scale-110 group-hover:text-green-600 transition-all duration-300" />
-              <span class="text-gray-700 group-hover:text-gray-900 transition-colors duration-300">Up to 20 invoices per month</span>
+              <CheckIcon class="h-4 w-4 sm:h-5 sm:w-5 text-green-500 mt-0.5 flex-shrink-0 group-hover:scale-110 group-hover:text-green-600 transition-all duration-300" />
+              <span class="text-gray-700 text-sm sm:text-base group-hover:text-gray-900 transition-colors duration-300">Up to 20 invoices per month</span>
             </li>
             <li class="flex items-start gap-3 group-hover:bg-blue-50 group-hover:px-2 group-hover:py-1 group-hover:rounded-lg transition-all duration-300">
-              <CheckIcon class="h-5 w-5 text-green-500 mt-0.5 flex-shrink-0 group-hover:scale-110 group-hover:text-green-600 transition-all duration-300" />
-              <span class="text-gray-700 group-hover:text-gray-900 transition-colors duration-300">Unlimited receipts</span>
+              <CheckIcon class="h-4 w-4 sm:h-5 sm:w-5 text-green-500 mt-0.5 flex-shrink-0 group-hover:scale-110 group-hover:text-green-600 transition-all duration-300" />
+              <span class="text-gray-700 text-sm sm:text-base group-hover:text-gray-900 transition-colors duration-300">Unlimited receipts</span>
             </li>
             <li class="flex items-start gap-3 group-hover:bg-blue-50 group-hover:px-2 group-hover:py-1 group-hover:rounded-lg transition-all duration-300">
-              <CheckIcon class="h-5 w-5 text-green-500 mt-0.5 flex-shrink-0 group-hover:scale-110 group-hover:text-green-600 transition-all duration-300" />
-              <span class="text-gray-700 group-hover:text-gray-900 transition-colors duration-300">Up to 50 clients</span>
+              <CheckIcon class="h-4 w-4 sm:h-5 sm:w-5 text-green-500 mt-0.5 flex-shrink-0 group-hover:scale-110 group-hover:text-green-600 transition-all duration-300" />
+              <span class="text-gray-700 text-sm sm:text-base group-hover:text-gray-900 transition-colors duration-300">Up to 50 clients</span>
             </li>
             <li class="flex items-start gap-3 group-hover:bg-blue-50 group-hover:px-2 group-hover:py-1 group-hover:rounded-lg transition-all duration-300">
-              <CheckIcon class="h-5 w-5 text-green-500 mt-0.5 flex-shrink-0 group-hover:scale-110 group-hover:text-green-600 transition-all duration-300" />
-              <span class="text-gray-700 group-hover:text-gray-900 transition-colors duration-300">Basic invoice templates</span>
+              <CheckIcon class="h-4 w-4 sm:h-5 sm:w-5 text-green-500 mt-0.5 flex-shrink-0 group-hover:scale-110 group-hover:text-green-600 transition-all duration-300" />
+              <span class="text-gray-700 text-sm sm:text-base group-hover:text-gray-900 transition-colors duration-300">Basic invoice templates</span>
             </li>
             <li class="flex items-start gap-3 group-hover:bg-blue-50 group-hover:px-2 group-hover:py-1 group-hover:rounded-lg transition-all duration-300">
-              <CheckIcon class="h-5 w-5 text-green-500 mt-0.5 flex-shrink-0 group-hover:scale-110 group-hover:text-green-600 transition-all duration-300" />
-              <span class="text-gray-700 group-hover:text-gray-900 transition-colors duration-300">Email support</span>
+              <CheckIcon class="h-4 w-4 sm:h-5 sm:w-5 text-green-500 mt-0.5 flex-shrink-0 group-hover:scale-110 group-hover:text-green-600 transition-all duration-300" />
+              <span class="text-gray-700 text-sm sm:text-base group-hover:text-gray-900 transition-colors duration-300">Email support</span>
             </li>
             <li class="flex items-start gap-3 group-hover:bg-blue-50 group-hover:px-2 group-hover:py-1 group-hover:rounded-lg transition-all duration-300">
-              <CheckIcon class="h-5 w-5 text-green-500 mt-0.5 flex-shrink-0 group-hover:scale-110 group-hover:text-green-600 transition-all duration-300" />
-              <span class="text-gray-700 group-hover:text-gray-900 transition-colors duration-300">Paystack integration</span>
+              <CheckIcon class="h-4 w-4 sm:h-5 sm:w-5 text-green-500 mt-0.5 flex-shrink-0 group-hover:scale-110 group-hover:text-green-600 transition-all duration-300" />
+              <span class="text-gray-700 text-sm sm:text-base group-hover:text-gray-900 transition-colors duration-300">Paystack integration</span>
             </li>
           </ul>
         </div>
 
         <!-- Professional Plan (Popular) -->
-        <div class="bg-blue-600 rounded-2xl shadow-xl p-8 transform scale-105 relative animate-on-scroll group hover:scale-110 transition-all duration-500 hover:shadow-2xl animate-pulse-subtle">
-          <div class="absolute -top-4 left-1/2 transform -translate-x-1/2 animate-bounce-subtle">
-            <span class="bg-orange-500 text-white px-4 py-1 rounded-full text-sm font-semibold flex items-center gap-2">
-              <StarIcon class="h-4 w-4" />
-              Most Popular
+        <div class="bg-blue-600 rounded-2xl shadow-xl p-5 sm:p-6 lg:p-8 transform sm:scale-105 relative animate-on-scroll group hover:sm:scale-110 transition-all duration-500 hover:shadow-2xl animate-pulse-subtle h-full">
+          <div class="absolute -top-3 sm:-top-4 left-1/2 transform -translate-x-1/2 animate-bounce-subtle">
+            <span class="bg-orange-500 text-white px-3 sm:px-4 py-1 rounded-full text-xs sm:text-sm font-semibold flex items-center gap-2">
+              <StarIcon class="h-3 w-3 sm:h-4 sm:w-4" />
+              <span class="hidden sm:inline">Most Popular</span>
+              <span class="sm:hidden">Popular</span>
             </span>
           </div>
 
-          <div class="mb-8">
-            <h3 class="text-2xl font-bold text-white mb-2">Professional</h3>
-            <p class="text-blue-100 mb-6">Ideal for growing businesses</p>
-            <div class="mb-6">
-              <span class="text-4xl font-bold text-white">$35</span>
-              <span class="text-blue-100">/month</span>
+          <div class="mb-6 sm:mb-8">
+            <h3 class="text-xl sm:text-2xl font-bold text-white mb-2">Professional</h3>
+            <p class="text-blue-100 mb-4 sm:mb-6 text-sm sm:text-base">Ideal for growing businesses</p>
+            <div class="mb-4 sm:mb-6">
+              <span class="text-3xl sm:text-4xl font-bold text-white">$35</span>
+              <span class="text-blue-100 text-sm sm:text-base">/month</span>
             </div>
             <button
               @click="handleSelectPlan('professional')"
-              class="w-full px-6 py-3 bg-white text-blue-600 font-semibold rounded-lg hover:bg-gray-100 transition-colors duration-200 shadow-lg"
+              class="w-full px-4 sm:px-6 py-2.5 sm:py-3 bg-white text-blue-600 font-semibold rounded-lg hover:bg-gray-100 transition-colors duration-200 shadow-lg text-sm sm:text-base"
             >
               Start Free Trial
             </button>
           </div>
 
-          <ul class="space-y-4">
+          <ul class="space-y-3 sm:space-y-4">
             <li class="flex items-start gap-3">
-              <CheckIcon class="h-5 w-5 text-white mt-0.5 flex-shrink-0" />
-              <span class="text-white">Unlimited invoices</span>
+              <CheckIcon class="h-4 w-4 sm:h-5 sm:w-5 text-white mt-0.5 flex-shrink-0" />
+              <span class="text-white text-sm sm:text-base">Unlimited invoices</span>
             </li>
             <li class="flex items-start gap-3">
-              <CheckIcon class="h-5 w-5 text-white mt-0.5 flex-shrink-0" />
-              <span class="text-white">Unlimited receipts</span>
+              <CheckIcon class="h-4 w-4 sm:h-5 sm:w-5 text-white mt-0.5 flex-shrink-0" />
+              <span class="text-white text-sm sm:text-base">Unlimited receipts</span>
             </li>
             <li class="flex items-start gap-3">
-              <CheckIcon class="h-5 w-5 text-white mt-0.5 flex-shrink-0" />
-              <span class="text-white">Unlimited clients</span>
+              <CheckIcon class="h-4 w-4 sm:h-5 sm:w-5 text-white mt-0.5 flex-shrink-0" />
+              <span class="text-white text-sm sm:text-base">Unlimited clients</span>
             </li>
             <li class="flex items-start gap-3">
-              <CheckIcon class="h-5 w-5 text-white mt-0.5 flex-shrink-0" />
-              <span class="text-white">Premium templates</span>
+              <CheckIcon class="h-4 w-4 sm:h-5 sm:w-5 text-white mt-0.5 flex-shrink-0" />
+              <span class="text-white text-sm sm:text-base">Premium templates</span>
             </li>
             <li class="flex items-start gap-3">
-              <CheckIcon class="h-5 w-5 text-white mt-0.5 flex-shrink-0" />
-              <span class="text-white">Custom branding</span>
+              <CheckIcon class="h-4 w-4 sm:h-5 sm:w-5 text-white mt-0.5 flex-shrink-0" />
+              <span class="text-white text-sm sm:text-base">Custom branding</span>
             </li>
             <li class="flex items-start gap-3">
-              <CheckIcon class="h-5 w-5 text-white mt-0.5 flex-shrink-0" />
-              <span class="text-white">Priority email support</span>
+              <CheckIcon class="h-4 w-4 sm:h-5 sm:w-5 text-white mt-0.5 flex-shrink-0" />
+              <span class="text-white text-sm sm:text-base">Priority email support</span>
             </li>
             <li class="flex items-start gap-3">
-              <CheckIcon class="h-5 w-5 text-white mt-0.5 flex-shrink-0" />
-              <span class="text-white">Advanced analytics</span>
+              <CheckIcon class="h-4 w-4 sm:h-5 sm:w-5 text-white mt-0.5 flex-shrink-0" />
+              <span class="text-white text-sm sm:text-base">Advanced analytics</span>
             </li>
             <li class="flex items-start gap-3">
-              <CheckIcon class="h-5 w-5 text-white mt-0.5 flex-shrink-0" />
-              <span class="text-white">API access</span>
+              <CheckIcon class="h-4 w-4 sm:h-5 sm:w-5 text-white mt-0.5 flex-shrink-0" />
+              <span class="text-white text-sm sm:text-base">API access</span>
             </li>
           </ul>
         </div>
 
         <!-- Enterprise Plan -->
-        <div class="bg-white rounded-2xl shadow-lg border border-gray-200 p-8 hover:shadow-xl transition-shadow duration-300">
-          <div class="mb-8">
-            <h3 class="text-2xl font-bold text-gray-900 mb-2">Enterprise</h3>
-            <p class="text-gray-600 mb-6">For large organizations with custom needs</p>
-            <div class="mb-6">
-              <span class="text-4xl font-bold text-gray-900">Custom</span>
+        <div class="bg-white rounded-2xl shadow-lg border border-gray-200 p-5 sm:p-6 lg:p-8 hover:shadow-xl transition-all duration-300 h-full">
+          <div class="mb-6 sm:mb-8">
+            <h3 class="text-xl sm:text-2xl font-bold text-gray-900 mb-2">Enterprise</h3>
+            <p class="text-gray-600 mb-4 sm:mb-6 text-sm sm:text-base">For large organizations with custom needs</p>
+            <div class="mb-4 sm:mb-6">
+              <span class="text-3xl sm:text-4xl font-bold text-gray-900">Custom</span>
             </div>
             <button
               @click="handleSelectPlan('enterprise')"
-              class="w-full px-6 py-3 bg-gray-900 text-white font-semibold rounded-lg hover:bg-gray-800 transition-colors duration-200"
+              class="w-full px-4 sm:px-6 py-2.5 sm:py-3 bg-gray-900 text-white font-semibold rounded-lg hover:bg-gray-800 transition-colors duration-200 text-sm sm:text-base"
             >
               Contact Sales
             </button>
           </div>
 
-          <ul class="space-y-4">
+          <ul class="space-y-3 sm:space-y-4">
             <li class="flex items-start gap-3">
-              <CheckIcon class="h-5 w-5 text-green-500 mt-0.5 flex-shrink-0" />
-              <span class="text-gray-700">Everything in Professional</span>
+              <CheckIcon class="h-4 w-4 sm:h-5 sm:w-5 text-green-500 mt-0.5 flex-shrink-0" />
+              <span class="text-gray-700 text-sm sm:text-base">Everything in Professional</span>
             </li>
             <li class="flex items-start gap-3">
-              <CheckIcon class="h-5 w-5 text-green-500 mt-0.5 flex-shrink-0" />
-              <span class="text-gray-700">Custom integrations</span>
+              <CheckIcon class="h-4 w-4 sm:h-5 sm:w-5 text-green-500 mt-0.5 flex-shrink-0" />
+              <span class="text-gray-700 text-sm sm:text-base">Custom integrations</span>
             </li>
             <li class="flex items-start gap-3">
-              <CheckIcon class="h-5 w-5 text-green-500 mt-0.5 flex-shrink-0" />
-              <span class="text-gray-700">Dedicated account manager</span>
+              <CheckIcon class="h-4 w-4 sm:h-5 sm:w-5 text-green-500 mt-0.5 flex-shrink-0" />
+              <span class="text-gray-700 text-sm sm:text-base">Dedicated account manager</span>
             </li>
             <li class="flex items-start gap-3">
-              <CheckIcon class="h-5 w-5 text-green-500 mt-0.5 flex-shrink-0" />
-              <span class="text-gray-700">Phone support</span>
+              <CheckIcon class="h-4 w-4 sm:h-5 sm:w-5 text-green-500 mt-0.5 flex-shrink-0" />
+              <span class="text-gray-700 text-sm sm:text-base">Phone support</span>
             </li>
             <li class="flex items-start gap-3">
-              <CheckIcon class="h-5 w-5 text-green-500 mt-0.5 flex-shrink-0" />
-              <span class="text-gray-700">Custom training</span>
+              <CheckIcon class="h-4 w-4 sm:h-5 sm:w-5 text-green-500 mt-0.5 flex-shrink-0" />
+              <span class="text-gray-700 text-sm sm:text-base">Custom training</span>
             </li>
             <li class="flex items-start gap-3">
-              <CheckIcon class="h-5 w-5 text-green-500 mt-0.5 flex-shrink-0" />
-              <span class="text-gray-700">SLA guarantee</span>
+              <CheckIcon class="h-4 w-4 sm:h-5 sm:w-5 text-green-500 mt-0.5 flex-shrink-0" />
+              <span class="text-gray-700 text-sm sm:text-base">SLA guarantee</span>
             </li>
             <li class="flex items-start gap-3">
-              <CheckIcon class="h-5 w-5 text-green-500 mt-0.5 flex-shrink-0" />
-              <span class="text-gray-700">Custom contracts</span>
+              <CheckIcon class="h-4 w-4 sm:h-5 sm:w-5 text-green-500 mt-0.5 flex-shrink-0" />
+              <span class="text-gray-700 text-sm sm:text-base">Custom contracts</span>
             </li>
           </ul>
         </div>
