@@ -8,8 +8,6 @@ const isAuthenticated = ref(false)
 const userName = ref('John Doe')
 const userEmail = ref('john@example.com')
 
-const showMobileMenu = ref(false)
-
 const navigation = [
   { name: 'Features', href: '/features' },
   { name: 'Pricing', href: '/pricing' },
@@ -45,14 +43,6 @@ const legalLinks = [
   { name: 'Licenses', href: '/licenses' }
 ]
 
-const toggleMobileMenu = () => {
-  showMobileMenu.value = !showMobileMenu.value
-}
-
-const closeMobileMenu = () => {
-  showMobileMenu.value = false
-}
-
 defineEmits(['signin', 'signup', 'dashboard'])
 </script>
 
@@ -68,29 +58,10 @@ defineEmits(['signin', 'signup', 'dashboard'])
       @signin="$emit('signin')"
       @signup="$emit('signup')"
       @dashboard="$emit('dashboard')"
-      @toggle-mobile-menu="toggleMobileMenu"
     />
 
-    <!-- Mobile menu overlay -->
-    <div
-      v-if="showMobileMenu"
-      class="fixed inset-0 z-50 md:hidden"
-    >
-      <div class="fixed inset-0 bg-black bg-opacity-50" @click="closeMobileMenu" />
-      <div class="fixed right-0 top-0 h-full w-64 bg-white shadow-xl">
-        <div class="flex items-center justify-between p-4 border-b">
-          <span class="text-lg font-semibold">Menu</span>
-          <button @click="closeMobileMenu" class="p-2 hover:bg-gray-100 rounded">
-            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
-            </svg>
-          </button>
-        </div>
-      </div>
-    </div>
-
-    <!-- Main Content -->
-    <main>
+    <!-- Main Content with padding for fixed header -->
+    <main class="pt-16">
       <NuxtPage />
     </main>
 
