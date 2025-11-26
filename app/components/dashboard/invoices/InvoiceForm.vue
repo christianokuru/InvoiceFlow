@@ -160,22 +160,33 @@ const isFormValid = computed(() => {
 <template>
   <form @submit.prevent="handleSubmit" class="space-y-6">
     <!-- Auto-generated fields display -->
-    <div class="grid grid-cols-2 gap-4 p-4 bg-gray-50 rounded-lg">
+    <div class="grid grid-cols-2 gap-4 p-4 bg-gray-50 rounded-lg border border-gray-200">
       <div>
         <label class="block text-sm font-medium text-gray-700 mb-1">
           Invoice Number
         </label>
-        <p class="text-sm text-gray-900 font-mono">
-          {{ invoice ? invoice.number : generatedInvoiceNumber }}
-        </p>
+        <div class="flex items-center space-x-2 px-3 py-2 bg-white border border-gray-300 rounded-md">
+          <svg class="w-4 h-4 text-gray-400" fill="currentColor" viewBox="0 0 20 20">
+            <path d="M9 2a1 1 0 000 2h2a1 1 0 100-2H9z"/>
+            <path fill-rule="evenodd" d="M4 5a2 2 0 012-2 1 1 0 000 2H6a2 2 0 100 4h2a2 2 0 100-4h-.5a1 1 0 000-2H8a2 2 0 012-2h2a2 2 0 012 2v9a2 2 0 01-2 2H6a2 2 0 01-2-2V5z" clip-rule="evenodd"/>
+          </svg>
+          <p class="text-sm text-gray-900 font-mono">
+            {{ invoice ? invoice.number : generatedInvoiceNumber }}
+          </p>
+        </div>
       </div>
       <div>
         <label class="block text-sm font-medium text-gray-700 mb-1">
           Date
         </label>
-        <p class="text-sm text-gray-900">
-          {{ invoice ? invoice.date : generatedDate }}
-        </p>
+        <div class="flex items-center space-x-2 px-3 py-2 bg-white border border-gray-300 rounded-md">
+          <svg class="w-4 h-4 text-gray-400" fill="currentColor" viewBox="0 0 20 20">
+            <path fill-rule="evenodd" d="M6 2a1 1 0 00-1 1v1H4a2 2 0 00-2 2v10a2 2 0 002 2h12a2 2 0 002-2V6a2 2 0 00-2-2h-1V3a1 1 0 10-2 0v1H7V3a1 1 0 00-1-1zm0 5a1 1 0 000 2h8a1 1 0 100-2H6z" clip-rule="evenodd"/>
+          </svg>
+          <p class="text-sm text-gray-900">
+            {{ invoice ? invoice.date : generatedDate }}
+          </p>
+        </div>
       </div>
     </div>
 
@@ -212,9 +223,9 @@ const isFormValid = computed(() => {
           Amount <span class="text-red-500">*</span>
         </label>
         <div class="relative">
-          <span class="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-500">
-            $
-          </span>
+          <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+            <span class="text-gray-500 sm:text-sm">$</span>
+          </div>
           <input
             id="amount"
             v-model="formData.amount"
@@ -224,8 +235,10 @@ const isFormValid = computed(() => {
             min="0"
             placeholder="0.00"
             :class="[
-              'w-full pl-8 pr-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500',
-              errors.amount ? 'border-red-500' : 'border-gray-300'
+              'block w-full pl-7 pr-3 py-2 border rounded-md text-sm font-mono',
+              'focus:outline-none focus:ring-1 focus:ring-gray-500 focus:border-gray-500',
+              'placeholder:text-gray-400',
+              errors.amount ? 'border-red-300 text-red-900' : 'border-gray-300'
             ]"
             @blur="validateField('amount', formData.amount)"
             @input="handleInputChange('amount', $event.target.value)"
@@ -258,14 +271,16 @@ const isFormValid = computed(() => {
         rows="4"
         placeholder="Enter invoice description or services provided..."
         :class="[
-          'w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 resize-none',
-          errors.description ? 'border-red-500' : 'border-gray-300'
+          'block w-full px-3 py-2 border rounded-md resize-none',
+          'focus:outline-none focus:ring-1 focus:ring-gray-500 focus:border-gray-500',
+          'placeholder:text-gray-400',
+          errors.description ? 'border-red-300' : 'border-gray-300'
         ]"
         @blur="validateField('description', formData.description)"
         @input="handleInputChange('description', $event.target.value)"
       ></textarea>
       <p v-if="errors.description" class="mt-1 text-sm text-red-600">{{ errors.description }}</p>
-      <div class="mt-1 text-xs text-gray-500">
+      <div class="mt-1 text-xs text-gray-500 text-right">
         {{ formData.description.length }}/500 characters
       </div>
     </div>
@@ -274,7 +289,7 @@ const isFormValid = computed(() => {
     <div class="flex gap-3 pt-4">
       <button
         type="button"
-        class="flex-1 px-4 py-2 border border-gray-300 text-gray-700 rounded-lg hover:bg-gray-50 transition-colors focus:outline-none focus:ring-2 focus:ring-gray-500"
+        class="flex-1 px-4 py-2 border border-gray-300 text-gray-700 rounded-md hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-gray-500 focus:ring-offset-2 disabled:opacity-50 disabled:cursor-not-allowed"
         @click="handleCancel"
         :disabled="loading"
       >
@@ -282,7 +297,7 @@ const isFormValid = computed(() => {
       </button>
       <button
         type="submit"
-        class="flex-1 px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors focus:outline-none focus:ring-2 focus:ring-blue-500 disabled:bg-blue-400 disabled:cursor-not-allowed"
+        class="flex-1 px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 disabled:bg-blue-400 disabled:cursor-not-allowed"
         :disabled="loading || !isFormValid"
       >
         <span v-if="loading" class="flex items-center justify-center">
