@@ -74,6 +74,18 @@ const handleUserMenuAction = (item) => {
   console.log('User menu action:', item.value)
   // Handle user menu actions here
 }
+
+const handleSignIn = () => {
+  navigateTo('/auth/login')
+}
+
+const handleSignUp = () => {
+  navigateTo('/auth/register')
+}
+
+const handleDashboard = () => {
+  navigateTo('/dashboard')
+}
 </script>
 
 <template>
@@ -83,13 +95,13 @@ const handleUserMenuAction = (item) => {
         <!-- Left side - Logo and Navigation -->
         <div class="flex items-center">
           <!-- Logo -->
-          <div class="flex-shrink-0 flex items-center">
+          <NuxtLink to="/" class="flex-shrink-0 flex items-center">
             <svg class="w-8 h-8 text-blue-600 mr-3" fill="currentColor" viewBox="0 0 20 20">
               <path d="M4 4a2 2 0 00-2 2v1h16V6a2 2 0 00-2-2H4z" />
               <path fill-rule="evenodd" d="M18 9H2v5a2 2 0 002 2h12a2 2 0 002-2V9zM4 13a1 1 0 011-1h1a1 1 0 110 2H5a1 1 0 01-1-1zm5-1a1 1 0 100 2h1a1 1 0 100-2H9z" clip-rule="evenodd" />
             </svg>
             <span class="text-xl font-bold text-gray-900">InvoiceFlow</span>
-          </div>
+          </NuxtLink>
 
           <!-- Desktop Navigation -->
           <nav class="hidden md:ml-10 md:flex space-x-8">
@@ -109,10 +121,10 @@ const handleUserMenuAction = (item) => {
         <div class="flex items-center space-x-4">
           <!-- Sign In / Sign Up buttons -->
           <div v-if="!isAuthenticated" class="flex items-center space-x-3">
-            <Button variant="ghost" size="sm" @click="$emit('signin')">
+            <Button variant="ghost" size="sm" @click="handleSignIn">
               Sign In
             </Button>
-            <Button variant="primary" size="sm" @click="$emit('signup')">
+            <Button variant="primary" size="sm" @click="handleSignUp">
               Get Started
             </Button>
           </div>
@@ -127,7 +139,7 @@ const handleUserMenuAction = (item) => {
             </button>
 
             <!-- Dashboard button -->
-            <Button variant="primary" size="sm" @click="$emit('dashboard')">
+            <Button variant="primary" size="sm" @click="handleDashboard">
               Go to Dashboard
             </Button>
 
@@ -200,10 +212,10 @@ const handleUserMenuAction = (item) => {
 
       <div v-else class="pt-4 pb-3 border-t border-gray-200">
         <div class="px-4 space-y-3">
-          <Button variant="ghost" size="sm" class="w-full" @click="closeMobileMenu">
+          <Button variant="ghost" size="sm" class="w-full" @click="handleSignIn">
             Sign In
           </Button>
-          <Button variant="primary" size="sm" class="w-full" @click="closeMobileMenu">
+          <Button variant="primary" size="sm" class="w-full" @click="handleSignUp">
             Get Started
           </Button>
         </div>
