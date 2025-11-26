@@ -1,3 +1,4 @@
+<!-- pages/auth/forgot-password.vue  -->
 <template>
   <div class="w-full max-w-md mx-auto">
     <!-- Password Reset Form Component -->

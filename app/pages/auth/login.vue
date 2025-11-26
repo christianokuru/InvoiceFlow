@@ -1,3 +1,4 @@
+<!-- pages/auth/login.vue  -->
 <template>
   <div class="w-full max-w-md mx-auto">
     <!-- Login Form Component -->

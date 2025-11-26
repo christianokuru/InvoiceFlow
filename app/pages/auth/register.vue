@@ -1,3 +1,4 @@
+<!-- pages/auth/register.vue  -->
 <template>
   <div class="w-full max-w-md mx-auto">
     <!-- Register Form Component -->

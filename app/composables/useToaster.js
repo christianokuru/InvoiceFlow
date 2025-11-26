@@ -1,3 +1,4 @@
+// app/composables/useToaster.js 
 import { ref, readonly } from 'vue'
 
 const toasts = ref([])
@@ -20,7 +21,8 @@ export const useToaster = () => {
 
     // Auto dismiss if duration is set
     if (duration > 0) {
-      let startTime = Date.now()
+      const startTime = Date.now()
+      
       const updatePercentage = () => {
         const elapsed = Date.now() - startTime
         const remaining = Math.max(0, duration - elapsed)
@@ -33,6 +35,8 @@ export const useToaster = () => {
           if (remaining > 0) {
             requestAnimationFrame(updatePercentage)
           } else {
+            // Set to 0 before removing
+            toasts.value[toastIndex].percentage = 0
             // Auto remove when duration expires
             setTimeout(() => removeToast(id), 300) // Wait for exit animation
           }

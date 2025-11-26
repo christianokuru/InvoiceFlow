@@ -1,3 +1,4 @@
+<!-- app/app.vue -->
 <template>
   <div id="app">
     <NuxtLayout>
@@ -12,6 +13,7 @@ import { useToaster } from '~/composables/useToaster'
 
 // Get the toaster composable to manage toasts globally
 const { toasts, removeToast } = useToaster()
+import Toaster from '~/components/ui/Toaster.vue';
 </script>
 
 <style>
