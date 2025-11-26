@@ -1,3 +1,48 @@
+<script setup>
+import { computed } from 'vue'
+
+const props = defineProps({
+  productLinks: {
+    type: Array,
+    default: () => [
+      { name: 'Features', href: '/features' },
+      { name: 'Pricing', href: '/pricing' },
+      { name: 'API', href: '/api' },
+      { name: 'Documentation', href: '/docs' }
+    ]
+  },
+  companyLinks: {
+    type: Array,
+    default: () => [
+      { name: 'About', href: '/about' },
+      { name: 'Blog', href: '/blog' },
+      { name: 'Careers', href: '/careers' },
+      { name: 'Press', href: '/press' }
+    ]
+  },
+  supportLinks: {
+    type: Array,
+    default: () => [
+      { name: 'Help Center', href: '/help' },
+      { name: 'Contact', href: '/contact' },
+      { name: 'Status', href: '/status' },
+      { name: 'Terms', href: '/terms' }
+    ]
+  },
+  legalLinks: {
+    type: Array,
+    default: () => [
+      { name: 'Privacy', href: '/privacy' },
+      { name: 'Terms of Service', href: '/terms' },
+      { name: 'Cookie Policy', href: '/cookies' },
+      { name: 'Licenses', href: '/licenses' }
+    ]
+  }
+})
+
+const currentYear = computed(() => new Date().getFullYear())
+</script>
+
 <template>
   <footer class="bg-gray-900 text-white">
     <div class="max-w-7xl mx-auto py-12 px-4 sm:px-6 lg:py-16 lg:px-8">
@@ -122,48 +167,3 @@
     </div>
   </footer>
 </template>
-
-<script setup lang="ts">
-import { computed } from 'vue'
-
-interface FooterLink {
-  name: string
-  href: string
-}
-
-interface Props {
-  productLinks?: FooterLink[]
-  companyLinks?: FooterLink[]
-  supportLinks?: FooterLink[]
-  legalLinks?: FooterLink[]
-}
-
-const props = withDefaults(defineProps<Props>(), {
-  productLinks: () => [
-    { name: 'Features', href: '/features' },
-    { name: 'Pricing', href: '/pricing' },
-    { name: 'API', href: '/api' },
-    { name: 'Documentation', href: '/docs' }
-  ],
-  companyLinks: () => [
-    { name: 'About', href: '/about' },
-    { name: 'Blog', href: '/blog' },
-    { name: 'Careers', href: '/careers' },
-    { name: 'Partners', href: '/partners' }
-  ],
-  supportLinks: () => [
-    { name: 'Help Center', href: '/help' },
-    { name: 'Contact Us', href: '/contact' },
-    { name: 'Status', href: '/status' },
-    { name: 'Community', href: '/community' }
-  ],
-  legalLinks: () => [
-    { name: 'Privacy Policy', href: '/privacy' },
-    { name: 'Terms of Service', href: '/terms' },
-    { name: 'Cookie Policy', href: '/cookies' },
-    { name: 'Security', href: '/security' }
-  ]
-})
-
-const currentYear = computed(() => new Date().getFullYear())
-</script>

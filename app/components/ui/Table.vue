@@ -1,3 +1,198 @@
+<script setup>
+import { computed } from 'vue'
+import Button from '~/components/ui/Button.vue'
+
+const props = defineProps({
+  data: {
+    type: Array,
+    default: () => []
+  },
+  columns: {
+    type: Array,
+    required: true
+  },
+  loading: {
+    type: Boolean,
+    default: false
+  },
+  emptyMessage: {
+    type: String,
+    default: 'No data available'
+  },
+  emptyDescription: {
+    type: String,
+    default: 'There are no items to display at this time.'
+  },
+  striped: {
+    type: Boolean,
+    default: false
+  },
+  bordered: {
+    type: Boolean,
+    default: true
+  },
+  hoverable: {
+    type: Boolean,
+    default: true
+  },
+  compact: {
+    type: Boolean,
+    default: false
+  },
+  showPagination: {
+    type: Boolean,
+    default: false
+  },
+  currentPage: {
+    type: Number,
+    default: 1
+  },
+  pageSize: {
+    type: Number,
+    default: 10
+  },
+  sortBy: {
+    type: String,
+    default: ''
+  },
+  sortOrder: {
+    type: String,
+    default: 'asc'
+  },
+  rowKey: {
+    type: [String, Function],
+    default: 'id'
+  }
+})
+
+defineEmits(['sort', 'row-click', 'prev-page', 'next-page', 'page-change', 'page-size-change'])
+
+const tableClasses = computed(() => [
+  'min-w-full divide-y divide-gray-200',
+  {
+    'table-fixed': props.columns.some(col => col.width),
+  }
+])
+
+const headerClasses = computed(() => [
+  'bg-gray-50'
+])
+
+const bodyClasses = computed(() => [
+  'bg-white divide-y divide-gray-200',
+  {
+    'divide-gray-100': props.compact
+  }
+])
+
+const paginatedData = computed(() => {
+  if (!props.showPagination) return props.data
+
+  const start = (props.currentPage - 1) * props.pageSize
+  const end = start + props.pageSize
+  return props.data.slice(start, end)
+})
+
+const totalPages = computed(() => {
+  return Math.ceil(props.data.length / props.pageSize)
+})
+
+const startIndex = computed(() => {
+  return (props.currentPage - 1) * props.pageSize
+})
+
+const endIndex = computed(() => {
+  return Math.min(startIndex.value + props.pageSize, props.data.length)
+})
+
+const visiblePages = computed(() => {
+  const pages = []
+  const maxVisible = 7
+  const half = Math.floor(maxVisible / 2)
+
+  let start = Math.max(1, props.currentPage - half)
+  let end = Math.min(totalPages.value, start + maxVisible - 1)
+
+  if (end - start + 1 < maxVisible) {
+    start = Math.max(1, end - maxVisible + 1)
+  }
+
+  for (let i = start; i <= end; i++) {
+    pages.push(i)
+  }
+
+  return pages
+})
+
+const getColumnClasses = (column) => [
+  'px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider',
+  {
+    'text-center': column.align === 'center',
+    'text-right': column.align === 'right',
+    'cursor-pointer hover:bg-gray-100': column.sortable
+  },
+  column.width || ''
+]
+
+const getRowClasses = (row, index) => [
+  'transition-colors duration-150',
+  {
+    'bg-white': !props.striped || index % 2 === 0,
+    'bg-gray-50': props.striped && index % 2 === 1,
+    'hover:bg-gray-50': props.hoverable,
+    'cursor-pointer': props.hoverable
+  }
+]
+
+const getCellClasses = (column) => [
+  'px-6 py-4 whitespace-nowrap text-sm',
+  {
+    'text-center': column.align === 'center',
+    'text-right': column.align === 'right',
+    'py-2': props.compact,
+    'font-medium text-gray-900': column.key === 'name' || column.key === 'title'
+  }
+]
+
+const getRowKey = (row, index) => {
+  if (typeof props.rowKey === 'function') {
+    return props.rowKey(row)
+  }
+  return row[props.rowKey] || index
+}
+
+const getCellValue = (row, key) => {
+  return key.split('.').reduce((obj, k) => obj && obj[k], row)
+}
+
+const formatCellValue = (value, column) => {
+  if (column.formatter) {
+    return column.formatter(value)
+  }
+
+  if (value === null || value === undefined) {
+    return '-'
+  }
+
+  if (typeof value === 'boolean') {
+    return value ? 'Yes' : 'No'
+  }
+
+  if (typeof value === 'number' && column.key.includes('amount')) {
+    return new Intl.NumberFormat('en-US', {
+      style: 'currency',
+      currency: 'USD'
+    }).format(value)
+  }
+
+  if (value instanceof Date) {
+    return value.toLocaleDateString()
+  }
+
+  return String(value)
+}
+</script>
+
 <template>
   <div class="overflow-hidden shadow ring-1 ring-black ring-opacity-5 md:rounded-lg">
     <div v-if="loading" class="flex items-center justify-center p-8">
@@ -143,181 +338,3 @@
     </div>
   </div>
 </template>
-
-<script setup lang="ts">
-import { computed } from 'vue'
-
-interface TableColumn {
-  key: string
-  title: string
-  sortable?: boolean
-  width?: string
-  align?: 'left' | 'center' | 'right'
-  formatter?: (value: any) => string
-}
-
-interface Props {
-  columns: TableColumn[]
-  data: any[]
-  loading?: boolean
-  emptyMessage?: string
-  emptyDescription?: string
-  striped?: boolean
-  bordered?: boolean
-  hoverable?: boolean
-  compact?: boolean
-  showPagination?: boolean
-  currentPage?: number
-  pageSize?: number
-  sortBy?: string
-  sortOrder?: 'asc' | 'desc'
-  rowKey?: string | ((row: any) => string)
-}
-
-const props = withDefaults(defineProps<Props>(), {
-  loading: false,
-  emptyMessage: 'No data available',
-  emptyDescription: 'Get started by creating a new item.',
-  striped: false,
-  bordered: false,
-  hoverable: true,
-  compact: false,
-  showPagination: false,
-  currentPage: 1,
-  pageSize: 10,
-  rowKey: 'id'
-})
-
-defineEmits<{
-  sort: [key: string]
-  'row-click': [row: any, index: number]
-  'prev-page': []
-  'next-page': []
-  'page-change': [page: number]
-}>()
-
-const tableClasses = computed(() => [
-  'min-w-full divide-y divide-gray-200',
-  {
-    'table-fixed': props.columns.some(col => col.width),
-  }
-])
-
-const headerClasses = computed(() => [
-  'bg-gray-50'
-])
-
-const bodyClasses = computed(() => [
-  'bg-white divide-y divide-gray-200',
-  {
-    'divide-gray-100': props.compact
-  }
-])
-
-const paginatedData = computed(() => {
-  if (!props.showPagination) return props.data
-
-  const start = (props.currentPage - 1) * props.pageSize
-  const end = start + props.pageSize
-  return props.data.slice(start, end)
-})
-
-const totalPages = computed(() => {
-  return Math.ceil(props.data.length / props.pageSize)
-})
-
-const startIndex = computed(() => {
-  return (props.currentPage - 1) * props.pageSize
-})
-
-const endIndex = computed(() => {
-  return Math.min(startIndex.value + props.pageSize, props.data.length)
-})
-
-const visiblePages = computed(() => {
-  const pages: number[] = []
-  const maxVisible = 7
-  const half = Math.floor(maxVisible / 2)
-
-  let start = Math.max(1, props.currentPage - half)
-  let end = Math.min(totalPages.value, start + maxVisible - 1)
-
-  if (end - start + 1 < maxVisible) {
-    start = Math.max(1, end - maxVisible + 1)
-  }
-
-  for (let i = start; i <= end; i++) {
-    pages.push(i)
-  }
-
-  return pages
-})
-
-const getColumnClasses = (column: TableColumn) => [
-  'px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider',
-  {
-    'text-center': column.align === 'center',
-    'text-right': column.align === 'right',
-    'cursor-pointer hover:bg-gray-100': column.sortable
-  },
-  column.width || ''
-]
-
-const getRowClasses = (row: any, index: number) => [
-  'transition-colors duration-150',
-  {
-    'bg-white': !props.striped || index % 2 === 0,
-    'bg-gray-50': props.striped && index % 2 === 1,
-    'hover:bg-gray-50': props.hoverable,
-    'cursor-pointer': props.hoverable
-  }
-]
-
-const getCellClasses = (column: TableColumn) => [
-  'px-6 py-4 whitespace-nowrap text-sm',
-  {
-    'text-center': column.align === 'center',
-    'text-right': column.align === 'right',
-    'py-2': props.compact,
-    'font-medium text-gray-900': column.key === 'name' || column.key === 'title'
-  }
-]
-
-const getRowKey = (row: any, index: number) => {
-  if (typeof props.rowKey === 'function') {
-    return props.rowKey(row)
-  }
-  return row[props.rowKey] || index
-}
-
-const getCellValue = (row: any, key: string) => {
-  return key.split('.').reduce((obj, k) => obj && obj[k], row)
-}
-
-const formatCellValue = (value: any, column: TableColumn) => {
-  if (column.formatter) {
-    return column.formatter(value)
-  }
-
-  if (value === null || value === undefined) {
-    return '-'
-  }
-
-  if (typeof value === 'boolean') {
-    return value ? 'Yes' : 'No'
-  }
-
-  if (typeof value === 'number' && column.key.includes('amount')) {
-    return new Intl.NumberFormat('en-US', {
-      style: 'currency',
-      currency: 'USD'
-    }).format(value)
-  }
-
-  if (value instanceof Date) {
-    return value.toLocaleDateString()
-  }
-
-  return String(value)
-}
-</script>

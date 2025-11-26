@@ -1,3 +1,61 @@
+<script setup>
+import { ref } from 'vue'
+import AppHeader from '~/components/marketing/AppHeader.vue'
+import AppFooter from '~/components/marketing/AppFooter.vue'
+
+// TODO
+const isAuthenticated = ref(false)
+const userName = ref('John Doe')
+const userEmail = ref('john@example.com')
+
+const showMobileMenu = ref(false)
+
+const navigation = [
+  { name: 'Features', href: '/features' },
+  { name: 'Pricing', href: '/pricing' },
+  { name: 'About', href: '/about' },
+  { name: 'Contact', href: '/contact' }
+]
+
+const productLinks = [
+  { name: 'Features', href: '/features' },
+  { name: 'Pricing', href: '/pricing' },
+  { name: 'API', href: '/api' },
+  { name: 'Documentation', href: '/docs' }
+]
+
+const companyLinks = [
+  { name: 'About', href: '/about' },
+  { name: 'Blog', href: '/blog' },
+  { name: 'Careers', href: '/careers' },
+  { name: 'Press', href: '/press' }
+]
+
+const supportLinks = [
+  { name: 'Help Center', href: '/help' },
+  { name: 'Contact', href: '/contact' },
+  { name: 'Status', href: '/status' },
+  { name: 'Terms', href: '/terms' }
+]
+
+const legalLinks = [
+  { name: 'Privacy', href: '/privacy' },
+  { name: 'Terms of Service', href: '/terms' },
+  { name: 'Cookie Policy', href: '/cookies' },
+  { name: 'Licenses', href: '/licenses' }
+]
+
+const toggleMobileMenu = () => {
+  showMobileMenu.value = !showMobileMenu.value
+}
+
+const closeMobileMenu = () => {
+  showMobileMenu.value = false
+}
+
+defineEmits(['signin', 'signup', 'dashboard'])
+</script>
+
 <template>
   <div class="min-h-screen bg-gray-50">
     <!-- App Header for marketing pages -->
@@ -33,7 +91,7 @@
 
     <!-- Main Content -->
     <main>
-      <slot />
+      <NuxtPage />
     </main>
 
     <!-- App Footer -->
@@ -45,65 +103,3 @@
     />
   </div>
 </template>
-
-<script setup lang="ts">
-import { ref, computed } from 'vue'
-import AppHeader from '~/components/marketing/AppHeader.vue'
-import AppFooter from '~/components/marketing/AppFooter.vue'
-
-// TODO: Replace with actual auth store
-const isAuthenticated = ref(false)
-const userName = ref('John Doe')
-const userEmail = ref('john@example.com')
-
-const showMobileMenu = ref(false)
-
-const navigation = [
-  { name: 'Features', href: '/features' },
-  { name: 'Pricing', href: '/pricing' },
-  { name: 'About', href: '/about' },
-  { name: 'Contact', href: '/contact' }
-]
-
-const productLinks = [
-  { name: 'Features', href: '/features' },
-  { name: 'Pricing', href: '/pricing' },
-  { name: 'API', href: '/api' },
-  { name: 'Documentation', href: '/docs' }
-]
-
-const companyLinks = [
-  { name: 'About', href: '/about' },
-  { name: 'Blog', href: '/blog' },
-  { name: 'Careers', href: '/careers' },
-  { name: 'Partners', href: '/partners' }
-]
-
-const supportLinks = [
-  { name: 'Help Center', href: '/help' },
-  { name: 'Contact Us', href: '/contact' },
-  { name: 'Status', href: '/status' },
-  { name: 'Community', href: '/community' }
-]
-
-const legalLinks = [
-  { name: 'Privacy Policy', href: '/privacy' },
-  { name: 'Terms of Service', href: '/terms' },
-  { name: 'Cookie Policy', href: '/cookies' },
-  { name: 'Security', href: '/security' }
-]
-
-const toggleMobileMenu = () => {
-  showMobileMenu.value = !showMobileMenu.value
-}
-
-const closeMobileMenu = () => {
-  showMobileMenu.value = false
-}
-
-defineEmits<{
-  signin: []
-  signup: []
-  dashboard: []
-}>()
-</script>

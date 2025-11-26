@@ -1,3 +1,10 @@
+<script setup>
+import AppHeader from '~/components/marketing/AppHeader.vue'
+import AppFooter from '~/components/marketing/AppFooter.vue'
+
+defineEmits(['signin', 'signup', 'dashboard'])
+</script>
+
 <template>
   <div class="min-h-screen bg-gray-50 flex flex-col">
     <!-- App Header -->
@@ -26,14 +33,3 @@
     <AppFooter />
   </div>
 </template>
-
-<script setup lang="ts">
-import AppHeader from '~/components/marketing/AppHeader.vue'
-import AppFooter from '~/components/marketing/AppFooter.vue'
-
-defineEmits<{
-  signin: []
-  signup: []
-  dashboard: []
-}>()
-</script>

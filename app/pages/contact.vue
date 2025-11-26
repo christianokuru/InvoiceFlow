@@ -4,10 +4,10 @@
   </div>
 </template>
 
-<script setup lang="ts">
+<script setup>
 definePageMeta({
   layout: 'default'
 })
 
-// TODO: Implement contact page
+// TODO
 </script>

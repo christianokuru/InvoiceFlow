@@ -4,10 +4,10 @@
   </div>
 </template>
 
-<script setup lang="ts">
+<script setup>
 definePageMeta({
   layout: 'default'
 })
 
-// TODO: Implement pricing page
+// TODO
 </script>

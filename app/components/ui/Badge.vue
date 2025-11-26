@@ -1,25 +1,29 @@
-<template>
-  <span :class="badgeClasses">
-    <component v-if="icon" :is="icon" :size="iconSize" class="mr-1" />
-    <slot>{{ text }}</slot>
-  </span>
-</template>
-
-<script setup lang="ts">
+<script setup>
 import { computed } from 'vue'
 
-interface Props {
-  text?: string
-  variant?: 'default' | 'success' | 'warning' | 'error' | 'info' | 'primary'
-  size?: 'sm' | 'md' | 'lg'
-  icon?: any
-  dot?: boolean
-}
-
-const props = withDefaults(defineProps<Props>(), {
-  variant: 'default',
-  size: 'md',
-  dot: false
+const props = defineProps({
+  variant: {
+    type: String,
+    default: 'default',
+    validator: (value) => ['default', 'success', 'warning', 'error', 'info', 'primary'].includes(value)
+  },
+  size: {
+    type: String,
+    default: 'md',
+    validator: (value) => ['sm', 'md', 'lg'].includes(value)
+  },
+  text: {
+    type: String,
+    default: ''
+  },
+  icon: {
+    type: [Object, Function],
+    default: null
+  },
+  dot: {
+    type: Boolean,
+    default: false
+  }
 })
 
 const iconSize = computed(() => {
@@ -52,3 +56,11 @@ const badgeClasses = computed(() => [
   }
 ])
 </script>
+
+<template>
+  <span :class="badgeClasses">
+    <component v-if="icon" :is="icon" :size="iconSize" class="mr-1" />
+    <slot>{{ text }}</slot>
+    <span v-if="dot" class="absolute -top-1 -right-1 h-2 w-2 rounded-full bg-current opacity-75"></span>
+  </span>
+</template>

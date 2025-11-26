@@ -1,3 +1,111 @@
+<script setup>
+import { computed } from 'vue'
+
+const props = defineProps({
+  currentPage: {
+    type: Number,
+    default: 1,
+    validator: (value) => value >= 1
+  },
+  totalItems: {
+    type: Number,
+    default: 0,
+    validator: (value) => value >= 0
+  },
+  pageSize: {
+    type: Number,
+    default: 10,
+    validator: (value) => value >= 1
+  },
+  maxVisiblePages: {
+    type: Number,
+    default: 5,
+    validator: (value) => value >= 3
+  },
+  showInfo: {
+    type: Boolean,
+    default: true
+  },
+  showPageSize: {
+    type: Boolean,
+    default: false
+  },
+  showFirstLast: {
+    type: Boolean,
+    default: false
+  },
+  pageSizeOptions: {
+    type: Array,
+    default: () => [10, 25, 50, 100]
+  }
+})
+
+defineEmits(['page-change', 'prev-page', 'next-page', 'page-size-change'])
+
+const totalPages = computed(() => {
+  return Math.ceil(props.totalItems / props.pageSize)
+})
+
+const startIndex = computed(() => {
+  return (props.currentPage - 1) * props.pageSize
+})
+
+const endIndex = computed(() => {
+  return Math.min(startIndex.value + props.pageSize, props.totalItems)
+})
+
+const visiblePages = computed(() => {
+  const pages = []
+  const half = Math.floor(props.maxVisiblePages / 2)
+
+  if (totalPages.value <= props.maxVisiblePages) {
+    for (let i = 1; i <= totalPages.value; i++) {
+      pages.push(i)
+    }
+    return pages
+  }
+
+  // Always include first page
+  pages.push(1)
+
+  // Calculate range around current page
+  let start = Math.max(2, props.currentPage - half)
+  let end = Math.min(totalPages.value - 1, props.currentPage + half)
+
+  // Adjust if we're too close to the beginning
+  if (start === 2) {
+    end = Math.min(totalPages.value - 1, props.maxVisiblePages - 1)
+  }
+
+  // Adjust if we're too close to the end
+  if (end === totalPages.value - 1) {
+    start = Math.max(2, totalPages.value - props.maxVisiblePages + 2)
+  }
+
+  // Add ellipsis if needed
+  if (start > 2) {
+    pages.push('...')
+  }
+
+  // Add middle pages
+  for (let i = start; i <= end; i++) {
+    pages.push(i)
+  }
+
+  // Add ellipsis if needed
+  if (end < totalPages.value - 1) {
+    pages.push('...')
+  }
+
+  // Always include last page if it's different from first
+  if (totalPages.value > 1) {
+    pages.push(totalPages.value)
+  }
+
+  return pages
+})
+</script>
+
 <template>
   <div class="bg-white px-4 py-3 flex items-center justify-between border-t border-gray-200 sm:px-6">
     <!-- Mobile pagination -->
@@ -43,8 +151,8 @@
         <select
           id="page-size"
           :value="pageSize"
-          @change="$emit('page-size-change', parseInt(($event.target as HTMLSelectElement).value))"
-          class="rounded-md border-gray-300 py-1 pl-3 pr-8 text-sm border-gray-300 focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500"
+          @change="$emit('page-size-change', parseInt($event.target.value))"
+          class="rounded-md py-1 pl-3 pr-8 text-sm border-gray-300 focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500"
         >
           <option v-for="size in pageSizeOptions" :key="size" :value="size">
             {{ size }}
@@ -148,96 +256,3 @@
     </div>
   </div>
 </template>
-
-<script setup lang="ts">
-import { computed } from 'vue'
-
-interface Props {
-  currentPage: number
-  totalItems: number
-  pageSize: number
-  maxVisiblePages?: number
-  showInfo?: boolean
-  showPageSize?: boolean
-  showFirstLast?: boolean
-  pageSizeOptions?: number[]
-}
-
-const props = withDefaults(defineProps<Props>(), {
-  maxVisiblePages: 7,
-  showInfo: true,
-  showPageSize: true,
-  showFirstLast: false,
-  pageSizeOptions: () => [10, 25, 50, 100]
-})
-
-defineEmits<{
-  'page-change': [page: number]
-  'prev-page': []
-  'next-page': []
-  'page-size-change': [pageSize: number]
-}>()
-
-const totalPages = computed(() => {
-  return Math.ceil(props.totalItems / props.pageSize)
-})
-
-const startIndex = computed(() => {
-  return (props.currentPage - 1) * props.pageSize
-})
-
-const endIndex = computed(() => {
-  return Math.min(startIndex.value + props.pageSize, props.totalItems)
-})
-
-const visiblePages = computed(() => {
-  const pages: (number | string)[] = []
-  const half = Math.floor(props.maxVisiblePages / 2)
-
-  if (totalPages.value <= props.maxVisiblePages) {
-    for (let i = 1; i <= totalPages.value; i++) {
-      pages.push(i)
-    }
-    return pages
-  }
-
-  // Always include first page
-  pages.push(1)
-
-  // Calculate range around current page
-  let start = Math.max(2, props.currentPage - half)
-  let end = Math.min(totalPages.value - 1, props.currentPage + half)
-
-  // Adjust if we're too close to the beginning
-  if (start === 2) {
-    end = Math.min(totalPages.value - 1, props.maxVisiblePages - 1)
-  }
-
-  // Adjust if we're too close to the end
-  if (end === totalPages.value - 1) {
-    start = Math.max(2, totalPages.value - props.maxVisiblePages + 2)
-  }
-
-  // Add ellipsis if needed
-  if (start > 2) {
-    pages.push('...')
-  }
-
-  // Add middle pages
-  for (let i = start; i <= end; i++) {
-    pages.push(i)
-  }
-
-  // Add ellipsis if needed
-  if (end < totalPages.value - 1) {
-    pages.push('...')
-  }
-
-  // Always include last page if it's different from first
-  if (totalPages.value > 1) {
-    pages.push(totalPages.value)
-  }
-
-  return pages
-})
-</script>

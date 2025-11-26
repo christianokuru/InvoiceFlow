@@ -4,10 +4,10 @@
   </div>
 </template>
 
-<script setup lang="ts">
+<script setup>
 definePageMeta({
   layout: 'dashboard'
 })
 
-// TODO: Implement copy page
+// TODO
 </script>

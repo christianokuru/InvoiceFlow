@@ -1,3 +1,142 @@
+<script setup>
+import { ref, computed, onMounted, onUnmounted, nextTick } from 'vue'
+
+const props = defineProps({
+  items: {
+    type: Array,
+    default: () => []
+  },
+  triggerText: {
+    type: String,
+    default: ''
+  },
+  triggerVariant: {
+    type: String,
+    default: 'primary'
+  },
+  triggerSize: {
+    type: String,
+    default: 'md'
+  },
+  triggerIcon: {
+    type: [Object, Function],
+    default: null
+  },
+  placement: {
+    type: String,
+    default: 'bottom-left',
+    validator: (value) => ['bottom-left', 'bottom-right', 'top-left', 'top-right'].includes(value)
+  },
+  closeOnSelect: {
+    type: Boolean,
+    default: true
+  },
+  disabled: {
+    type: Boolean,
+    default: false
+  },
+  teleport: {
+    type: Boolean,
+    default: false
+  }
+})
+
+const emit = defineEmits(['select', 'update:open'])
+
+const dropdownRef = ref()
+const isOpen = ref(false)
+const dropdownStyle = ref({})
+
+const dropdownClasses = computed(() => [
+  'absolute z-50 w-56 rounded-md shadow-lg bg-white ring-1 ring-black ring-opacity-5 focus:outline-none',
+  {
+    'right-0': props.placement === 'bottom-right' || props.placement === 'top-right',
+    'left-0': props.placement === 'bottom-left' || props.placement === 'top-left',
+    'bottom-full mb-2': props.placement.startsWith('top'),
+    'top-full mt-2': props.placement.startsWith('bottom')
+  }
+])
+
+const getItemClasses = (item) => [
+  'w-full text-left px-4 py-2 text-sm flex items-center space-x-2 group',
+  {
+    'text-gray-700 hover:bg-gray-100 hover:text-gray-900': !item.disabled,
+    'text-gray-400 cursor-not-allowed': item.disabled,
+    'bg-blue-50 text-blue-700': item.checked
+  }
+]
+
+const toggleDropdown = () => {
+  if (props.disabled) return
+
+  isOpen.value = !isOpen.value
+  emit('update:open', isOpen.value)
+
+  if (isOpen.value) {
+    nextTick(updateDropdownPosition)
+  }
+}
+
+const selectItem = (item) => {
+  if (item.disabled) return
+
+  emit('select', item)
+
+  if (item.onClick) {
+    item.onClick(item)
+  }
+
+  if (props.closeOnSelect) {
+    closeDropdown()
+  }
+}
+
+const closeDropdown = () => {
+  isOpen.value = false
+  emit('update:open', false)
+}
+
+const updateDropdownPosition = () => {
+  if (!dropdownRef.value || !isOpen.value) return
+
+  const trigger = dropdownRef.value
+  const dropdown = trigger.querySelector('[role="menu"]') || trigger.querySelector('.absolute')
+
+  if (!dropdown) return
+
+  const rect = trigger.getBoundingClientRect()
+  const dropdownRect = dropdown.getBoundingClientRect()
+  const viewportHeight = window.innerHeight
+  const viewportWidth = window.innerWidth
+
+  // Note: For now, let the CSS classes handle the positioning
+}
+
+// Click outside to close
+const handleClickOutside = (event) => {
+  if (dropdownRef.value && !dropdownRef.value.contains(event.target)) {
+    closeDropdown()
+  }
+}
+
+// Escape key to close
+const handleEscape = (event) => {
+  if (event.key === 'Escape' && isOpen.value) {
+    closeDropdown()
+  }
+}
+
+onMounted(() => {
+  document.addEventListener('click', handleClickOutside)
+  document.addEventListener('keydown', handleEscape)
+})
+
+onUnmounted(() => {
+  document.removeEventListener('click', handleClickOutside)
+  document.removeEventListener('keydown', handleEscape)
+})
+</script>
+
 <template>
   <div class="relative inline-block text-left" ref="dropdownRef">
     <!-- Trigger -->
@@ -59,145 +198,10 @@
   </div>
 </template>
 
-<script setup lang="ts">
-import { ref, computed, onMounted, onUnmounted, nextTick } from 'vue'
-
-interface DropdownItem {
-  label: string
-  value?: any
-  description?: string
-  icon?: any
-  disabled?: boolean
-  checked?: boolean
-  divider?: boolean
-  onClick?: (item: DropdownItem) => void
-}
-
-interface Props {
-  items?: DropdownItem[]
-  triggerText?: string
-  triggerVariant?: 'primary' | 'secondary' | 'ghost' | 'white'
-  triggerSize?: 'sm' | 'md' | 'lg'
-  triggerIcon?: any
-  placement?: 'bottom-left' | 'bottom-right' | 'top-left' | 'top-right'
-  disabled?: boolean
-  closeOnSelect?: boolean
-  teleport?: boolean
-}
-
-const props = withDefaults(defineProps<Props>(), {
-  items: () => [],
-  triggerVariant: 'secondary',
-  triggerSize: 'md',
-  placement: 'bottom-left',
-  closeOnSelect: true,
-  teleport: true
-})
-
-const emit = defineEmits<{
-  select: [item: DropdownItem]
-  'update:open': [value: boolean]
-}>()
-
-const dropdownRef = ref<HTMLElement>()
-const isOpen = ref(false)
-const dropdownStyle = ref({})
-
-const dropdownClasses = computed(() => [
-  'absolute z-50 w-56 rounded-md shadow-lg bg-white ring-1 ring-black ring-opacity-5 focus:outline-none',
-  {
-    'right-0': props.placement === 'bottom-right' || props.placement === 'top-right',
-    'left-0': props.placement === 'bottom-left' || props.placement === 'top-left',
-    'bottom-full mb-2': props.placement.startsWith('top'),
-    'top-full mt-2': props.placement.startsWith('bottom')
-  }
-])
-
-const getItemClasses = (item: DropdownItem) => [
-  'w-full text-left px-4 py-2 text-sm flex items-center space-x-2 group',
-  {
-    'text-gray-700 hover:bg-gray-100 hover:text-gray-900': !item.disabled,
-    'text-gray-400 cursor-not-allowed': item.disabled,
-    'bg-blue-50 text-blue-700': item.checked
-  }
-]
-
-const toggleDropdown = () => {
-  if (props.disabled) return
-
-  isOpen.value = !isOpen.value
-  emit('update:open', isOpen.value)
-
-  if (isOpen.value) {
-    nextTick(updateDropdownPosition)
-  }
-}
-
-const selectItem = (item: DropdownItem) => {
-  if (item.disabled) return
-
-  emit('select', item)
-
-  if (item.onClick) {
-    item.onClick(item)
-  }
-
-  if (props.closeOnSelect) {
-    closeDropdown()
-  }
-}
-
-const closeDropdown = () => {
-  isOpen.value = false
-  emit('update:open', false)
-}
-
-const updateDropdownPosition = () => {
-  if (!dropdownRef.value || !isOpen.value) return
-
-  const trigger = dropdownRef.value
-  const dropdown = trigger.querySelector('[role="menu"]') || trigger.querySelector('.absolute')
-
-  if (!dropdown) return
-
-  const rect = trigger.getBoundingClientRect()
-  const dropdownRect = dropdown.getBoundingClientRect()
-  const viewportHeight = window.innerHeight
-  const viewportWidth = window.innerWidth
-
-  // Note: Position adjustments would need to be handled with a reactive ref
-  // For now, let the CSS classes handle the positioning
-}
-
-// Click outside to close
-const handleClickOutside = (event: MouseEvent) => {
-  if (dropdownRef.value && !dropdownRef.value.contains(event.target as Node)) {
-    closeDropdown()
-  }
-}
-
-// Escape key to close
-const handleEscape = (event: KeyboardEvent) => {
-  if (event.key === 'Escape' && isOpen.value) {
-    closeDropdown()
-  }
-}
-
-onMounted(() => {
-  document.addEventListener('click', handleClickOutside)
-  document.addEventListener('keydown', handleEscape)
-})
-
-onUnmounted(() => {
-  document.removeEventListener('click', handleClickOutside)
-  document.removeEventListener('keydown', handleEscape)
-})
-</script>
-
 <style scoped>
 .dropdown-enter-active,
 .dropdown-leave-active {
-  transition: all 0.15s ease;
+  transition: all 0.2s ease;
 }
 
 .dropdown-enter-from {

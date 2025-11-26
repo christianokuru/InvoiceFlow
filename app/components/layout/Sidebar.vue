@@ -3,13 +3,14 @@
     class="bg-blue-600 text-white transition-all duration-300 flex flex-col"
     :class="expanded ? 'w-64' : 'w-20'"
   >
+    <!-- Header -->
     <div class="flex items-center justify-between h-16 px-4 border-b border-blue-700">
       <template v-if="expanded">
         <span class="text-xl font-semibold whitespace-nowrap">
           InvoiceApp
         </span>
         <button
-          @click="$emit('toggle')"
+          @click="toggleSidebar"
           class="p-1 rounded-md hover:bg-blue-700 focus:outline-none transition-colors"
         >
           <ChevronLeftIcon :size="20" />
@@ -18,7 +19,7 @@
 
       <template v-else>
         <button
-          @click="$emit('toggle')"
+          @click="toggleSidebar"
           class="p-1 mx-auto rounded-md hover:bg-blue-700 focus:outline-none transition-colors"
         >
           <MenuIcon :size="20" />
@@ -26,12 +27,13 @@
       </template>
     </div>
 
+    <!-- Navigation -->
     <div class="flex-1 overflow-y-auto py-4">
       <nav class="px-2 space-y-1">
         <button
           v-for="item in menuItems"
           :key="item.view"
-          @click="$emit('update:activeView', item.view)"
+          @click="handleMenuItemClick(item.view)"
           :class="[
             'w-full flex items-center px-2 py-3 rounded-md transition-colors',
             activeView === item.view ? 'bg-blue-700' : 'hover:bg-blue-700',
@@ -46,7 +48,7 @@
   </aside>
 </template>
 
-<script setup lang="ts">
+<script setup>
 import {
   HomeIcon,
   FileTextIcon,
@@ -59,17 +61,18 @@ import {
   ChevronLeftIcon,
 } from 'lucide-vue-next'
 
-interface Props {
-  expanded: boolean
-  activeView: string
-}
+const props = defineProps({
+  expanded: {
+    type: Boolean,
+    default: true
+  },
+  activeView: {
+    type: String,
+    default: 'dashboard'
+  }
+})
 
-defineProps<Props>()
-
-defineEmits<{
-  toggle: []
-  'update:activeView': [view: string]
-}>()
+const emit = defineEmits(['toggle', 'update:activeView'])
 
 const menuItems = [
   {
@@ -108,4 +111,12 @@ const menuItems = [
     view: 'clients',
   },
 ]
+
+const toggleSidebar = () => {
+  emit('toggle')
+}
+
+const handleMenuItemClick = (view) => {
+  emit('update:activeView', view)
+}
 </script>

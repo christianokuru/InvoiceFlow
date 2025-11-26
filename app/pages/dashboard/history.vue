@@ -4,10 +4,10 @@
   </div>
 </template>
 
-<script setup lang="ts">
+<script setup>
 definePageMeta({
   layout: 'dashboard'
 })
 
-// TODO: Implement history page
+// TODO
 </script>

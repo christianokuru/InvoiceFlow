@@ -1,5 +1,5 @@
 // TODO: Implement PDF generation utility
-export const generateInvoicePDF = (invoice: any): Promise<Blob> => {
+export const generateInvoicePDF = (invoice): Promise<Blob> => {
   // Invoice PDF generation logic will be implemented here
   return new Promise((resolve) => {
     // Placeholder implementation
@@ -8,7 +8,7 @@ export const generateInvoicePDF = (invoice: any): Promise<Blob> => {
   })
 }
 
-export const generateReceiptPDF = (receipt: any): Promise<Blob> => {
+export const generateReceiptPDF = (receipt): Promise<Blob> => {
   // Receipt PDF generation logic will be implemented here
   return new Promise((resolve) => {
     // Placeholder implementation
@@ -17,7 +17,7 @@ export const generateReceiptPDF = (receipt: any): Promise<Blob> => {
   })
 }
 
-export const downloadPDF = (blob: Blob, filename: string): void => {
+export const downloadPDF = (blob: Blob, filename) => {
   // PDF download logic will be implemented here
   const url = window.URL.createObjectURL(blob)
   const link = document.createElement('a')

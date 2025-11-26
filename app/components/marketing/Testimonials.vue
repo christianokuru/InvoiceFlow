@@ -4,6 +4,6 @@
   </div>
 </template>
 
-<script setup lang="ts">
-// TODO: Implement Testimonials component
+<script setup>
+// TODO
 </script>

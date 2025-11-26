@@ -1,3 +1,81 @@
+<script setup>
+import { computed, ref } from 'vue'
+import Button from '~/components/ui/Button.vue'
+import Dropdown from '~/components/ui/Dropdown.vue'
+
+const props = defineProps({
+  isAuthenticated: {
+    type: Boolean,
+    default: false
+  },
+  userName: {
+    type: String,
+    default: ''
+  },
+  userEmail: {
+    type: String,
+    default: ''
+  },
+  navigation: {
+    type: Array,
+    default: () => [
+      { name: 'Features', href: '/features' },
+      { name: 'Pricing', href: '/pricing' },
+      { name: 'About', href: '/about' },
+      { name: 'Contact', href: '/contact' }
+    ]
+  },
+  currentPath: {
+    type: String,
+    default: '/'
+  }
+})
+
+const emit = defineEmits(['signin', 'signup', 'dashboard', 'toggle-mobile-menu'])
+
+const showMobileMenu = ref(false)
+
+const userInitials = computed(() => {
+  return props.userName
+    .split(' ')
+    .map(word => word.charAt(0))
+    .join('')
+    .toUpperCase()
+    .slice(0, 2)
+})
+
+const userMenuItems = computed(() => [
+  {
+    label: 'Your Profile',
+    value: 'profile'
+  },
+  {
+    label: 'Settings',
+    value: 'settings'
+  },
+  {
+    label: 'Sign out',
+    value: 'signout'
+  }
+])
+
+const isActive = (href) => {
+  if (props.currentPath === href) return true
+  if (href === '/' && props.currentPath === '/') return true
+  if (href !== '/' && props.currentPath.startsWith(href)) return true
+  return false
+}
+
+const closeMobileMenu = () => {
+  showMobileMenu.value = false
+}
+
+const handleUserMenuAction = (item) => {
+  console.log('User menu action:', item.value)
+  // Handle user menu actions here
+}
+</script>
+
 <template>
   <header class="bg-white shadow-sm border-b border-gray-200">
     <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
@@ -133,90 +211,3 @@
     </div>
   </header>
 </template>
-
-<script setup lang="ts">
-import { computed, ref } from 'vue'
-
-interface NavigationItem {
-  name: string
-  href: string
-  current?: boolean
-}
-
-interface UserMenuItem {
-  label: string
-  value: string
-  icon?: any
-  onClick?: () => void
-}
-
-interface Props {
-  isAuthenticated?: boolean
-  userName?: string
-  userEmail?: string
-  navigation?: NavigationItem[]
-  currentPath?: string
-}
-
-const props = withDefaults(defineProps<Props>(), {
-  isAuthenticated: false,
-  userName: 'John Doe',
-  userEmail: 'john@example.com',
-  navigation: () => [
-    { name: 'Features', href: '/features' },
-    { name: 'Pricing', href: '/pricing' },
-    { name: 'About', href: '/about' },
-    { name: 'Contact', href: '/contact' }
-  ],
-  currentPath: ''
-})
-
-defineEmits<{
-  signin: []
-  signup: []
-  dashboard: []
-  'toggle-mobile-menu': []
-}>()
-
-const showMobileMenu = ref(false)
-
-const userInitials = computed(() => {
-  return props.userName
-    .split(' ')
-    .map(word => word.charAt(0))
-    .join('')
-    .toUpperCase()
-    .slice(0, 2)
-})
-
-const userMenuItems = computed((): UserMenuItem[] => [
-  {
-    label: 'Your Profile',
-    value: 'profile'
-  },
-  {
-    label: 'Settings',
-    value: 'settings'
-  },
-  {
-    label: 'Sign out',
-    value: 'signout'
-  }
-])
-
-const isActive = (href: string) => {
-  if (props.currentPath === href) return true
-  if (href === '/' && props.currentPath === '/') return true
-  if (href !== '/' && props.currentPath.startsWith(href)) return true
-  return false
-}
-
-const closeMobileMenu = () => {
-  showMobileMenu.value = false
-}
-
-const handleUserMenuAction = (item: UserMenuItem) => {
-  console.log('User menu action:', item.value)
-  // Handle user menu actions here
-}
-</script>

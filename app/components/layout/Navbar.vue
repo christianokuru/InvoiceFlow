@@ -17,12 +17,18 @@
           </div>
         </div>
         <div class="flex items-center space-x-4">
-          <button class="p-1 rounded-full text-gray-400 hover:text-gray-500 focus:outline-none focus:ring-2 focus:ring-blue-500">
+          <button
+            class="p-1 rounded-full text-gray-400 hover:text-gray-500 focus:outline-none focus:ring-2 focus:ring-blue-500"
+            @click="handleNotificationClick"
+          >
             <BellIcon class="h-6 w-6" />
           </button>
           <div class="border-l border-gray-200 h-6 mx-2"></div>
           <div class="flex items-center">
-            <button class="flex items-center space-x-2 text-sm font-medium text-gray-700 focus:outline-none">
+            <button
+              class="flex items-center space-x-2 text-sm font-medium text-gray-700 focus:outline-none hover:bg-gray-100 rounded-md px-3 py-2 transition-colors"
+              @click="handleUserMenuClick"
+            >
               <span class="h-8 w-8 rounded-full bg-blue-500 flex items-center justify-center text-white">
                 <UserIcon class="h-5 w-5" />
               </span>
@@ -35,14 +41,23 @@
   </header>
 </template>
 
-<script setup lang="ts">
+<script setup>
 import { SearchIcon, BellIcon, UserIcon } from 'lucide-vue-next'
 
-interface Props {
-  userName?: string
+const props = defineProps({
+  userName: {
+    type: String,
+    default: 'John Doe'
+  }
+})
+
+const emit = defineEmits(['notification-click', 'user-menu-click'])
+
+const handleNotificationClick = () => {
+  emit('notification-click')
 }
 
-withDefaults(defineProps<Props>(), {
-  userName: 'John Doe'
-})
+const handleUserMenuClick = () => {
+  emit('user-menu-click')
+}
 </script>

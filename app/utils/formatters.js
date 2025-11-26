@@ -1,5 +1,5 @@
 // TODO: Implement formatting utilities
-export const formatCurrency = (amount: number, currency = 'USD'): string => {
+export const formatCurrency = (amount, currency = 'USD') => {
   // Currency formatting will be implemented here
   return new Intl.NumberFormat('en-US', {
     style: 'currency',
@@ -7,12 +7,12 @@ export const formatCurrency = (amount: number, currency = 'USD'): string => {
   }).format(amount)
 }
 
-export const formatPercent = (value: number): string => {
+export const formatPercent = (value) => {
   // Percentage formatting will be implemented here
   return `${(value * 100).toFixed(1)}%`
 }
 
-export const formatFileSize = (bytes: number): string => {
+export const formatFileSize = (bytes) => {
   // File size formatting will be implemented here
   const units = ['B', 'KB', 'MB', 'GB']
   let size = bytes
@@ -26,7 +26,7 @@ export const formatFileSize = (bytes: number): string => {
   return `${size.toFixed(1)} ${units[unitIndex]}`
 }
 
-export const formatNumber = (value: number): string => {
+export const formatNumber = (value) => {
   // Number formatting will be implemented here
   return new Intl.NumberFormat('en-US').format(value)
 }

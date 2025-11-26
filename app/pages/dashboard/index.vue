@@ -10,10 +10,10 @@
   </div>
 </template>
 
-<script setup lang="ts">
+<script setup>
 definePageMeta({
   layout: 'dashboard'
 })
 
-// TODO: Implement dashboard home page
+// TODO
 </script>

@@ -51,20 +51,10 @@
   </nav>
 </template>
 
-<script setup lang="ts">
-interface BreadcrumbItem {
-  label: string
-  path?: string
-  icon?: any
-}
+<script setup>
+defineProps()
 
-interface Props {
-  breadcrumbs: BreadcrumbItem[]
-}
-
-defineProps<Props>()
-
-defineEmits<{
-  navigate: [path: string]
-}>()
+defineEmits([
+  navigate
+])()
 </script>

@@ -1,13 +1,28 @@
 <template>
-  <div>
-    <!-- Forgot password page will be implemented here -->
+  <div class="w-full max-w-md mx-auto">
+    <!-- Password Reset Form Component -->
+    <PasswordResetForm
+      @success="handleResetSuccess"
+      @error="handleResetError"
+    />
   </div>
 </template>
 
-<script setup lang="ts">
+<script setup>
+import PasswordResetForm from '~/components/auth/PasswordResetForm.vue'
+
 definePageMeta({
   layout: 'auth'
 })
 
-// TODO: Implement forgot password page
+const handleResetSuccess = async (data) => {
+  // In a real app, you would handle password reset here
+  console.log('Password reset email sent:', data)
+}
+
+
+const handleResetError = (error) => {
+  // Error is already handled by the PasswordResetForm component with toasts
+  console.error('Password reset error:', error)
+}
 </script>

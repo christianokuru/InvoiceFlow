@@ -1,3 +1,45 @@
+<script setup>
+import { onMounted, onUnmounted } from 'vue'
+
+const props = defineProps({
+  isOpen: {
+    type: Boolean,
+    default: false
+  },
+  title: {
+    type: String,
+    default: ''
+  },
+  closeOnEscape: {
+    type: Boolean,
+    default: true
+  }
+})
+
+const emit = defineEmits(['update:isOpen', 'close'])
+
+const closeModal = () => {
+  emit('update:isOpen', false)
+  emit('close')
+}
+
+// Handle escape key
+const handleEscape = (event) => {
+  if (event.key === 'Escape' && props.closeOnEscape && props.isOpen) {
+    closeModal()
+  }
+}
+
+// Add and remove event listener
+onMounted(() => {
+  document.addEventListener('keydown', handleEscape)
+})
+
+onUnmounted(() => {
+  document.removeEventListener('keydown', handleEscape)
+})
+</script>
+
 <template>
   <Teleport to="body">
     <Transition name="modal" appear>
@@ -46,59 +88,19 @@
   </Teleport>
 </template>
 
-<script setup lang="ts">
-import { onMounted, onUnmounted } from 'vue'
-
-interface Props {
-  isOpen: boolean
-  title?: string
-  closeOnEscape?: boolean
-}
-
-const props = withDefaults(defineProps<Props>(), {
-  closeOnEscape: true
-})
-
-const emit = defineEmits<{
-  'update:isOpen': [value: boolean]
-  close: []
-}>()
-
-const closeModal = () => {
-  emit('update:isOpen', false)
-  emit('close')
-}
-
-// Handle escape key
-const handleEscape = (event: KeyboardEvent) => {
-  if (event.key === 'Escape' && props.closeOnEscape && props.isOpen) {
-    closeModal()
-  }
-}
-
-// Add and remove event listener
-onMounted(() => {
-  document.addEventListener('keydown', handleEscape)
-})
-
-onUnmounted(() => {
-  document.removeEventListener('keydown', handleEscape)
-})
-</script>
-
 <style scoped>
 .modal-enter-active,
 .modal-leave-active {
-  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  transition: all 0.3s ease;
 }
 
 .modal-enter-from {
   opacity: 0;
-  transform: scale(0.95) translateY(20px);
+  transform: translateY(20px);
 }
 
 .modal-leave-to {
   opacity: 0;
-  transform: scale(0.95) translateY(-20px);
+  transform: translateY(-20px);
 }
 </style>

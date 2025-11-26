@@ -236,7 +236,7 @@ To become the most intuitive and affordable invoice/receipt management solution 
 ## 6. Technical Architecture
 
 ### Technology Stack
-- **Frontend**: Nuxt 4 with Vue 3, TypeScript, Tailwind CSS
+- **Frontend**: Nuxt 4 with Vue 3, JavaScript, Tailwind CSS
 - **Backend**: Nuxt Nitro Server with API routes
 - **Database**: MongoDB with Mongoose ODM
 - **Authentication**: JWT tokens with refresh mechanism
@@ -625,15 +625,15 @@ receipts/
 - **Stores**: Global state management with Pinia (located in root `/stores/`)
 - **Middleware**: Route protection and global behaviors (both server and client)
 - **Plugins**: Third-party integrations and global functionality
-- **Types**: Global TypeScript definitions (located in root `/types/`)
+- **Types**: Global type definitions (located in root `/types/`)
 
 #### **Nuxt 4 Key Differences**
 - **App Directory**: All client-side code is organized within the `/app/` directory
 - **Co-located Structure**: Components, composables, and utilities are organized within their respective domains
 - **Enhanced Modularity**: Better separation of concerns with the app directory structure
-- **Improved TypeScript Support**: Enhanced type checking with the new directory organization
+- **Improved JavaScript Support**: Enhanced development experience with the new directory organization
 
-This structure follows Nuxt 4 conventions with the app directory pattern, maintaining clear separation of concerns and enabling scalable development practices while taking advantage of Nuxt's enhanced modularity and TypeScript support.
+This structure follows Nuxt 4 conventions with the app directory pattern, maintaining clear separation of concerns and enabling scalable development practices while taking advantage of Nuxt's enhanced modularity and JavaScript support.
 
 ## 15. Conclusion
 

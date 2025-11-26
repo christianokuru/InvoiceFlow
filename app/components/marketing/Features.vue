@@ -4,6 +4,6 @@
   </div>
 </template>
 
-<script setup lang="ts">
-// TODO: Implement Features component
+<script setup>
+// TODO
 </script>

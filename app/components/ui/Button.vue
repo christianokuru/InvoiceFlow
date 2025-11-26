@@ -15,27 +15,33 @@
   </button>
 </template>
 
-<script setup lang="ts">
+<script setup>
 import { computed } from 'vue'
 
-interface Props {
-  variant?: 'primary' | 'secondary' | 'success' | 'danger' | 'ghost' | 'white'
-  size?: 'sm' | 'md' | 'lg'
-  icon?: any
-  disabled?: boolean
-  loading?: boolean
-}
-
-const props = withDefaults(defineProps<Props>(), {
-  variant: 'primary',
-  size: 'md',
-  disabled: false,
-  loading: false
+const props = defineProps({
+  variant: {
+    type: String,
+    default: 'primary'
+  },
+  size: {
+    type: String,
+    default: 'md'
+  },
+  disabled: {
+    type: Boolean,
+    default: false
+  },
+  loading: {
+    type: Boolean,
+    default: false
+  },
+  icon: {
+    type: [Object, Function],
+    default: null
+  }
 })
 
-defineEmits<{
-  click: [event: MouseEvent]
-}>()
+defineEmits(['click'])
 
 const iconSize = computed(() => {
   switch (props.size) {
