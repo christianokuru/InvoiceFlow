@@ -3,6 +3,9 @@ import { computed, ref, onMounted, onUnmounted } from 'vue'
 import { MenuIcon, XIcon, HomeIcon, UserIcon, CogIcon, LogOutIcon, TrendingUpIcon, StarIcon, CreditCardIcon, FileTextIcon, PhoneIcon, InfoIcon } from 'lucide-vue-next'
 import Button from '~/components/ui/Button.vue'
 import Dropdown from '~/components/ui/Dropdown.vue'
+import { useMicroInteractions } from '~/composables/useMicroInteractions'
+import { useAccessibility } from '~/composables/useAccessibility'
+import { useMobileUX } from '~/composables/useMobileUX'
 
 const props = defineProps({
   isAuthenticated: {
@@ -34,22 +37,67 @@ const props = defineProps({
 
 const emit = defineEmits(['signin', 'signup', 'dashboard', 'toggle-mobile-menu'])
 
+// Get current route for active state
+const route = useRoute()
+
+// Initialize accessibility and mobile UX
+const accessibility = useAccessibility()
+const mobileUX = useMobileUX()
+
 const showMobileMenu = ref(false)
 
-// Handle body scroll when menu is open
+// Handle body scroll when menu is open (enhanced with accessibility)
 const toggleMobileMenu = () => {
   showMobileMenu.value = !showMobileMenu.value
   if (showMobileMenu.value) {
     document.body.style.overflow = 'hidden'
+
+    // Trigger haptic feedback on mobile
+    if (mobileUX.isMobile.value) {
+      mobileUX.triggerHapticFeedback('light')
+    }
+
+    // Announce to screen readers
+    accessibility.announceToScreenReader('Mobile menu opened', 'polite')
+
+    // Create focus trap for mobile menu
+    setTimeout(() => {
+      const mobileMenu = document.querySelector('.mobile-menu-sheet')
+      if (mobileMenu) {
+        accessibility.createFocusTrap(mobileMenu, 'mobile-menu')
+      }
+    }, 100)
   } else {
     document.body.style.overflow = ''
+
+    // Announce to screen readers
+    accessibility.announceToScreenReader('Mobile menu closed', 'polite')
+
+    // Remove focus trap
+    accessibility.removeFocusTrap('mobile-menu')
   }
 }
 
 const closeMobileMenu = () => {
   showMobileMenu.value = false
   document.body.style.overflow = ''
+
+  // Announce to screen readers
+  accessibility.announceToScreenReader('Mobile menu closed', 'polite')
+
+  // Remove focus trap
+  accessibility.removeFocusTrap('mobile-menu')
 }
+
+// Initialize micro-interactions
+const microInteractions = useMicroInteractions()
+
+onMounted(() => {
+  // Initialize micro-interactions for navigation elements
+  setTimeout(() => {
+    microInteractions.initializeInteractions()
+  }, 100)
+})
 
 // Cleanup on unmount
 onUnmounted(() => {
@@ -98,9 +146,13 @@ const userMenuItems = computed(() => [
 ])
 
 const isActive = (href) => {
-  if (props.currentPath === href) return true
-  if (href === '/' && props.currentPath === '/') return true
-  if (href !== '/' && props.currentPath.startsWith(href)) return true
+  const currentPath = route.path
+  // Exact match for homepage
+  if (href === '/' && currentPath === '/') return true
+  // Exact match for other pages
+  if (href === currentPath) return true
+  // Parent path match (for nested routes)
+  if (href !== '/' && currentPath.startsWith(href)) return true
   return false
 }
 
@@ -112,16 +164,43 @@ const handleUserMenuAction = (item) => {
 
 const handleSignIn = () => {
   closeMobileMenu()
+
+  // Trigger haptic feedback on mobile
+  if (mobileUX.isMobile.value) {
+    mobileUX.triggerHapticFeedback('light')
+  }
+
+  // Announce to screen readers
+  accessibility.announceToScreenReader('Navigating to sign in page', 'polite')
+
   navigateTo('/auth/login')
 }
 
 const handleSignUp = () => {
   closeMobileMenu()
+
+  // Trigger haptic feedback on mobile
+  if (mobileUX.isMobile.value) {
+    mobileUX.triggerHapticFeedback('medium')
+  }
+
+  // Announce to screen readers
+  accessibility.announceToScreenReader('Navigating to registration page', 'polite')
+
   navigateTo('/auth/register')
 }
 
 const handleDashboard = () => {
   closeMobileMenu()
+
+  // Trigger haptic feedback on mobile
+  if (mobileUX.isMobile.value) {
+    mobileUX.triggerHapticFeedback('medium')
+  }
+
+  // Announce to screen readers
+  accessibility.announceToScreenReader('Navigating to dashboard', 'polite')
+
   navigateTo('/dashboard')
 }
 </script>
@@ -142,14 +221,25 @@ const handleDashboard = () => {
           </NuxtLink>
 
           <!-- Desktop Navigation -->
-          <nav class="hidden md:ml-10 md:flex space-x-8">
+          <nav class="hidden md:ml-10 md:flex space-x-1">
             <template v-for="item in navigation" :key="item.name">
               <NuxtLink
                 :to="item.href"
-                class="text-gray-500 hover:text-gray-900 px-3 py-2 rounded-md text-sm font-medium transition-colors duration-200"
-                :class="{ 'text-blue-600 bg-blue-50': isActive(item.href) }"
+                class="relative text-gray-500 hover:text-gray-900 px-4 py-2 rounded-lg text-sm font-medium transition-all duration-300 group"
+                :class="[
+                  isActive(item.href)
+                    ? 'text-blue-600 bg-blue-50 shadow-sm'
+                    : 'hover:bg-gray-50'
+                ]"
               >
-                {{ item.name }}
+                <span class="relative z-10">{{ item.name }}</span>
+                <!-- Active state indicator -->
+                <div
+                  v-if="isActive(item.href)"
+                  class="absolute bottom-0 left-1/2 transform -translate-x-1/2 w-1 h-1 bg-blue-600 rounded-full animate-bounce-subtle"
+                ></div>
+                <!-- Hover effect -->
+                <div class="absolute inset-0 bg-blue-50 rounded-lg opacity-0 group-hover:opacity-50 transition-opacity duration-300"></div>
               </NuxtLink>
             </template>
           </nav>
@@ -198,7 +288,10 @@ const handleDashboard = () => {
           <div class="sm:hidden">
             <button
               @click="toggleMobileMenu"
-              class="p-2 rounded-md text-gray-400 hover:text-gray-500 hover:bg-gray-100 transition-colors duration-200"
+              class="p-2 rounded-md text-gray-400 hover:text-gray-500 hover:bg-gray-100 transition-colors duration-200 clickable"
+              :aria-expanded="showMobileMenu"
+              aria-controls="mobile-menu-sheet"
+              aria-label="Toggle mobile navigation menu"
             >
               <MenuIcon class="h-6 w-6" />
             </button>
@@ -221,30 +314,35 @@ const handleDashboard = () => {
 
   <!-- Sliding Sheet -->
   <div
-    class="fixed top-0 right-0 h-full w-80 max-w-full bg-white shadow-2xl z-50 md:hidden transform transition-all duration-300 ease-in-out"
+    id="mobile-menu-sheet"
+    class="mobile-menu-sheet fixed top-0 right-0 h-full w-80 max-w-full bg-white shadow-2xl z-50 md:hidden transform transition-all duration-300 ease-in-out"
     :class="showMobileMenu ? 'translate-x-0' : 'translate-x-full'"
+    role="dialog"
+    aria-modal="true"
+    aria-labelledby="mobile-menu-title"
+    aria-hidden="!showMobileMenu"
   >
     <!-- Sheet Header -->
     <div class="bg-gradient-to-r from-blue-600 to-indigo-600 text-white p-6 relative">
       <button
         @click="closeMobileMenu"
-        class="absolute top-4 right-4 p-2 rounded-full hover:bg-white hover:bg-opacity-20 transition-colors duration-200"
+        class="absolute top-4 right-4 p-2 rounded-full hover:bg-white hover:bg-opacity-20 transition-colors duration-200 clickable"
+        aria-label="Close mobile menu"
       >
         <XIcon class="h-6 w-6 text-white" />
       </button>
 
       <div class="mt-4">
-        <div class="flex items-center space-x-3">
-          <div class="w-12 h-12 bg-white bg-opacity-20 rounded-full flex items-center justify-center">
-            <svg class="w-6 h-6 text-white" fill="currentColor" viewBox="0 0 20 20">
+        <h2 id="mobile-menu-title" class="text-xl font-bold">InvoiceFlow</h2>
+        <p class="text-blue-100 text-sm">Your Business Companion</p>
+      </div>
+
+      <div class="flex items-center space-x-3">
+        <div class="w-12 h-12 bg-white bg-opacity-20 rounded-full flex items-center justify-center">
+          <svg class="w-6 h-6 text-white" fill="currentColor" viewBox="0 0 20 20" aria-hidden="true">
               <path d="M4 4a2 2 0 00-2 2v1h16V6a2 2 0 00-2-2H4z" />
               <path fill-rule="evenodd" d="M18 9H2v5a2 2 0 002 2h12a2 2 0 002-2V9zM4 13a1 1 0 011-1h1a1 1 0 110 2H5a1 1 0 01-1-1zm5-1a1 1 0 100 2h1a1 1 0 100-2H9z" clip-rule="evenodd" />
             </svg>
-          </div>
-          <div>
-            <h3 class="text-xl font-bold">InvoiceFlow</h3>
-            <p class="text-blue-100 text-sm">Your Business Companion</p>
-          </div>
         </div>
       </div>
     </div>
@@ -257,14 +355,30 @@ const handleDashboard = () => {
           v-for="item in navigationWithIcons"
           :key="item.name"
           :to="item.href"
-          class="flex items-center space-x-3 px-4 py-3 rounded-lg text-gray-700 hover:bg-blue-50 hover:text-blue-600 transition-all duration-200 group"
-          :class="{ 'bg-blue-50 text-blue-600': isActive(item.href) }"
+          class="relative flex items-center space-x-3 px-4 py-3 rounded-lg text-gray-700 hover:bg-blue-50 hover:text-blue-600 transition-all duration-300 group overflow-hidden"
+          :class="[
+            isActive(item.href)
+              ? 'bg-gradient-to-r from-blue-50 to-indigo-50 text-blue-600 shadow-sm border border-blue-100'
+              : 'hover:shadow-sm'
+          ]"
           @click="closeMobileMenu"
         >
-          <component :is="item.icon" class="h-5 w-5 group-hover:scale-110 transition-transform duration-200" />
-          <span class="font-medium">{{ item.name }}</span>
-          <div v-if="isActive(item.href)" class="ml-auto">
-            <div class="w-2 h-2 bg-blue-600 rounded-full"></div>
+          <!-- Animated background effect -->
+          <div class="absolute inset-0 bg-gradient-to-r from-blue-400 to-indigo-400 opacity-0 group-hover:opacity-5 transition-opacity duration-300"></div>
+
+          <component
+            :is="item.icon"
+            class="relative z-10 h-5 w-5 transition-all duration-300 group-hover:scale-110 group-hover:rotate-3"
+            :class="isActive(item.href) ? 'text-blue-600' : ''"
+          />
+          <span class="relative z-10 font-medium">{{ item.name }}</span>
+
+          <!-- Active state indicator with animation -->
+          <div v-if="isActive(item.href)" class="ml-auto relative z-10">
+            <div class="flex items-center space-x-1">
+              <div class="w-2 h-2 bg-blue-600 rounded-full animate-pulse"></div>
+              <div class="w-1 h-1 bg-blue-400 rounded-full animate-pulse animation-delay-200"></div>
+            </div>
           </div>
         </NuxtLink>
       </nav>
