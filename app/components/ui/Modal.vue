@@ -10,6 +10,11 @@ const props = defineProps({
     type: String,
     default: ''
   },
+  size: {
+    type: String,
+    default: 'md',
+    validator: (value) => ['sm', 'md', 'lg', 'xl'].includes(value)
+  },
   closeOnEscape: {
     type: Boolean,
     default: true
@@ -41,51 +46,57 @@ onUnmounted(() => {
 </script>
 
 <template>
-  <Teleport to="body">
-    <Transition name="modal" appear>
-      <div v-if="isOpen" class="fixed inset-0 z-50 flex items-center justify-center p-4">
-        <!-- Backdrop -->
-        <div
-          class="absolute inset-0 bg-black bg-opacity-50"
-          @click="closeModal"
-        />
+  <Transition name="modal" appear>
+    <div v-if="isOpen" class="fixed inset-0 z-50 flex items-center justify-center p-4">
+      <!-- Backdrop -->
+      <div
+        class="absolute inset-0 bg-black bg-opacity-50"
+        @click="closeModal"
+      />
 
-        <!-- Modal Content -->
-        <div class="relative bg-white rounded-lg shadow-xl max-w-2xl w-full max-h-[90vh] overflow-hidden">
-          <!-- Header -->
-          <div v-if="title || $slots.header" class="sticky top-0 bg-white border-b border-gray-200 px-6 py-4 flex items-center justify-between">
-            <div class="flex items-center">
-              <h2 v-if="title" class="text-xl font-semibold text-gray-900">
-                {{ title }}
-              </h2>
-              <slot name="header" />
-            </div>
-            <button
-              @click="closeModal"
-              class="text-gray-400 hover:text-gray-600 transition-colors"
-              type="button"
-            >
-              <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
-              </svg>
-            </button>
+      <!-- Modal Content -->
+      <div :class="[
+        'relative bg-white rounded-lg shadow-xl w-full max-h-[90vh] overflow-hidden',
+        {
+          'max-w-md': size === 'sm',
+          'max-w-lg': size === 'md',
+          'max-w-2xl': size === 'lg',
+          'max-w-4xl': size === 'xl'
+        }
+      ]">
+        <!-- Header -->
+        <div v-if="title || $slots.header" class="sticky top-0 bg-white border-b border-gray-200 px-6 py-4 flex items-center justify-between">
+          <div class="flex items-center">
+            <h2 v-if="title" class="text-xl font-semibold text-gray-900">
+              {{ title }}
+            </h2>
+            <slot name="header" />
           </div>
+          <button
+            @click="closeModal"
+            class="text-gray-400 hover:text-gray-600 transition-colors"
+            type="button"
+          >
+            <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
+            </svg>
+          </button>
+        </div>
 
-          <!-- Content -->
-          <div class="overflow-y-auto max-h-[calc(90vh-80px)]">
-            <div class="px-6 py-4">
-              <slot />
-            </div>
-          </div>
-
-          <!-- Footer -->
-          <div v-if="$slots.footer" class="sticky bottom-0 bg-white border-t border-gray-200 px-6 py-4">
-            <slot name="footer" />
+        <!-- Content -->
+        <div class="overflow-y-auto max-h-[calc(90vh-80px)]">
+          <div class="px-6 py-4">
+            <slot />
           </div>
         </div>
+
+        <!-- Footer -->
+        <div v-if="$slots.footer" class="sticky bottom-0 bg-white border-t border-gray-200 px-6 py-4">
+          <slot name="footer" />
+        </div>
       </div>
-    </Transition>
-  </Teleport>
+    </div>
+  </Transition>
 </template>
 
 <style scoped>
