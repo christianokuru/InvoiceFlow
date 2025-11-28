@@ -208,7 +208,40 @@ To become the most intuitive and affordable invoice/receipt management solution 
 - Data is encrypted both in transit and at rest
 - Backups are performed daily with verification
 
-### Epic 6: Analytics & Reporting
+### Epic 6: User Settings & Preferences
+
+#### User Stories
+- **As a business owner**, I want to manage my profile information so that my clients have accurate contact details
+- **As a freelancer**, I want to customize my business branding so that my documents look professional
+- **As a consultant**, I want to configure notification preferences so that I stay informed without being overwhelmed
+- **As an agency manager**, I want to set business details and banking information so that payments are processed correctly
+- **As a service provider**, I want to customize the appearance of the application so that it matches my preferences
+
+#### Functional Requirements
+- Profile photo upload with drag & drop functionality
+- Personal information management (name, email, phone)
+- Password change functionality with security validation
+- Business information settings (company name, type, registration details)
+- Address management with international formatting
+- Bank account details for payment processing
+- Email notification preferences and controls
+- SMS notification settings with quiet hours
+- In-app notification customization
+- Theme selection (light, dark, system)
+- Currency and date format preferences
+- Timezone configuration
+- Dashboard layout customization options
+
+#### Acceptance Criteria
+- Profile photos upload successfully with progress indication
+- All form fields have proper validation and error handling
+- Settings changes are saved immediately with success feedback
+- Notification preferences are applied in real-time
+- Theme changes are applied instantly across the application
+- Business information is properly formatted on documents
+- Password changes require current password confirmation
+
+### Epic 7: Analytics & Reporting
 
 #### User Stories
 - **As a business owner**, I want to see revenue trends so that I can make informed business decisions
@@ -286,6 +319,7 @@ To become the most intuitive and affordable invoice/receipt management solution 
 3. **Simple Client Management**
 4. **Document PDF Generation**
 5. **Basic Dashboard with Key Metrics**
+6. **User Settings & Preferences Management**
 
 ### Growth Phase - Phase 2
 1. **Receipt Generation & Management**
@@ -474,6 +508,9 @@ receipts/
 │   │   │   └── [id].delete.ts
 │   │   ├── history/
 │   │   │   └── index.get.ts
+│   │   ├── users/
+│   │   │   ├── settings.get.ts
+│   │   │   └── settings.put.ts
 │   │   ├── payments/
 │   │   │   ├── paystack.post.ts
 │   │   │   ├── subscriptions.post.ts
@@ -516,6 +553,7 @@ receipts/
 │   │   │   ├── history/
 │   │   │   ├── invoices/
 │   │   │   ├── receipts/
+│   │   │   ├── settings/
 │   │   │   └── shared/
 │   │   ├── layout/
 │   │   │   ├── Breadcrumb.vue
@@ -567,7 +605,8 @@ receipts/
 │   │   │   ├── index.vue
 │   │   │   ├── invoices.vue
 │   │   │   ├── receipts.vue
-│   │   │   └── send.vue
+│   │   │   ├── send.vue
+│   │   │   └── settings.vue
 │   │   ├── index.vue
 │   │   └── pricing.vue
 │   ├── plugins/
@@ -635,7 +674,101 @@ receipts/
 
 This structure follows Nuxt 4 conventions with the app directory pattern, maintaining clear separation of concerns and enabling scalable development practices while taking advantage of Nuxt's enhanced modularity and JavaScript support.
 
-## 15. Conclusion
+## 15. Settings Implementation Details
+
+The Settings page provides comprehensive user preference management through a modular component architecture:
+
+### Settings Page Structure (`app/pages/dashboard/settings.vue`)
+- **Tabbed Interface**: Smooth transitions between settings sections
+- **Centralized State Management**: Unified save/error handling across all settings
+- **Component Integration**: Seamless integration with auth and notification systems
+
+### Settings Components (`app/components/dashboard/settings/`)
+
+#### SettingsTabs.vue
+- **Navigation Component**: Tab-based navigation with icon indicators
+- **Active State Management**: Visual feedback for current section
+- **Responsive Design**: Mobile-friendly tab navigation
+- **Accessibility**: ARIA labels and keyboard navigation support
+
+#### AccountSettings.vue
+- **Profile Management**: Photo upload with drag & drop functionality
+- **Personal Information**: Name, email, phone number management
+- **Security Settings**: Password change with validation
+- **Profile Photo**: Upload, preview, and removal functionality
+- **Form Validation**: Real-time validation with error feedback
+
+#### BusinessSettings.vue
+- **Company Information**: Business name, type, registration details
+- **Address Management**: Complete address with international formatting
+- **Bank Details**: Secure payment information storage
+- **Logo Upload**: Business branding with image upload
+- **Tax Information**: Business tax ID and RC number management
+
+#### NotificationSettings.vue
+- **Email Preferences**: Granular control over email notifications
+- **SMS Settings**: Text message notifications with quiet hours
+- **In-App Notifications**: Desktop and browser notification controls
+- **Frequency Settings**: Daily, weekly, monthly summary options
+- **Quiet Hours**: Customizable notification blackout periods
+
+#### AppearanceSettings.vue
+- **Theme Selection**: Light, dark, and system theme options
+- **Currency Configuration**: Multi-currency support with proper formatting
+- **Date/Time Settings**: Customizable date formats and timezone selection
+- **Dashboard Layout**: Personalized dashboard arrangement options
+- **Accessibility**: High contrast and font size adjustments
+
+### Backend API Support (`server/api/users/`)
+- **Settings Retrieval**: GET `/api/users/settings` - Fetch current user settings
+- **Settings Updates**: PUT `/api/users/settings` - Update user preferences
+- **Validation**: Server-side validation for all settings data
+- **Error Handling**: Comprehensive error responses with proper status codes
+
+### User Model Extensions (`server/models/User.js`)
+The User schema has been extended to support comprehensive settings management:
+
+```javascript
+// Business Information
+business: {
+  name, type, rcNumber, taxId, logo,
+  address: { street, city, stateProvince, country, postalCode },
+  bankDetails: { bankName, accountNumber, accountName, swiftCode }
+}
+
+// Notification Settings
+notificationSettings: {
+  emailNotifications: { invoiceCreated, invoicePaid, receiptCreated, ... },
+  smsNotifications: { enabled, paymentReceived, highValueInvoice, ... },
+  inAppNotifications: { enabled, sound, desktop, badges },
+  frequency: { emailSummary, quietHours: { start, end } }
+}
+
+// Appearance Settings
+appearanceSettings: {
+  theme, currency, dateFormat, timezone, language,
+  dashboard: { compactView, showAnimations, defaultView, itemsPerPage },
+  region: { useMetric, use24Hour },
+  customization: { primaryColor, accentColor }
+}
+```
+
+### Features Implemented
+- **Real-time Updates**: Settings changes applied immediately
+- **Progress Indicators**: Visual feedback during save operations
+- **Error Handling**: Comprehensive validation and user feedback
+- **Responsive Design**: Mobile-optimized settings interface
+- **Security**: Secure handling of sensitive information
+- **Performance**: Optimized API calls and component rendering
+
+### User Experience Enhancements
+- **Intuitive Navigation**: Clear categorization of settings options
+- **Auto-save Prevention**: Confirmation dialogs for critical changes
+- **Visual Feedback**: Success notifications and loading states
+- **Accessibility**: Full keyboard navigation and screen reader support
+- **Progressive Disclosure**: Advanced settings hidden by default
+
+## 16. Conclusion
 
 InvoiceFlow represents a significant opportunity in the growing small business financial management market. By focusing on simplicity, affordability, and user experience, we can capture a substantial market share and build a sustainable SaaS business.
 
