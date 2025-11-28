@@ -70,7 +70,6 @@ const handleBackdropClick = (event) => {
   }
 }
 
-// Focus management
 const focusFirstElement = () => {
   nextTick(() => {
     if (firstFocusableElement.value) {
@@ -82,7 +81,6 @@ const focusFirstElement = () => {
   })
 }
 
-// Prevent body scroll when modal is open
 const preventBodyScroll = () => {
   if (props.isOpen) {
     document.body.style.overflow = 'hidden'
@@ -91,7 +89,6 @@ const preventBodyScroll = () => {
   }
 }
 
-// Watch for modal open/close
 watch(() => props.isOpen, (newValue) => {
   preventBodyScroll()
   if (newValue) {
@@ -101,7 +98,6 @@ watch(() => props.isOpen, (newValue) => {
   }
 })
 
-// Add and remove event listeners
 onMounted(() => {
   document.addEventListener('keydown', handleEscape)
   preventBodyScroll()
@@ -114,31 +110,28 @@ onUnmounted(() => {
 </script>
 
 <template>
-  <Transition name="modal" appear>
-    <div
-      v-if="isOpen"
-      class="fixed inset-0 z-50 flex items-center justify-center p-4"
-      @click="handleBackdropClick"
-    >
-      <!-- Simple Backdrop -->
-      <div class="absolute inset-0 bg-black/50" />
-
-      <!-- Modal Content -->
+  <Teleport to="body">
+    <Transition name="modal" appear>
       <div
-        ref="modalContent"
-        :class="[
-          'relative bg-white rounded-lg shadow-xl w-full max-h-[90vh] overflow-hidden border border-gray-200',
-          'transform transition-all duration-200 ease-out',
-          {
-            'max-w-md': size === 'sm',
-            'max-w-lg': size === 'md',
-            'max-w-2xl': size === 'lg',
-            'max-w-4xl': size === 'xl'
-          }
-        ]"
-        @keydown.tab="trapFocus"
+        v-if="isOpen"
+        class="fixed inset-0 z-[9999] flex items-center justify-center p-4 bg-black/50"
+        @click="handleBackdropClick"
       >
-        <!-- Header -->
+        <div
+          ref="modalContent"
+          :class="[
+            'relative bg-white rounded-lg shadow-xl w-full max-h-[90vh] overflow-hidden border border-gray-200 z-[10000]',
+            'transform transition-all duration-200 ease-out',
+            {
+              'max-w-md': size === 'sm',
+              'max-w-lg': size === 'md',
+              'max-w-2xl': size === 'lg',
+              'max-w-4xl': size === 'xl'
+            }
+          ]"
+          @click.stop
+          @keydown.tab="trapFocus"
+        >
         <div v-if="title || $slots.header" class="sticky top-0 bg-white border-b border-gray-200 px-6 py-4 flex items-center justify-between">
           <div>
             <h2 v-if="title" class="text-xl font-semibold text-gray-900">
@@ -158,43 +151,45 @@ onUnmounted(() => {
           </button>
         </div>
 
-        <!-- Content Area -->
         <div class="overflow-y-auto max-h-[calc(90vh-80px)]">
           <div class="px-6 py-4">
             <slot />
           </div>
         </div>
 
-        <!-- Footer -->
         <div v-if="$slots.footer" class="sticky bottom-0 bg-white border-t border-gray-200 px-6 py-4">
           <slot name="footer" />
         </div>
       </div>
     </div>
-  </Transition>
+    </Transition>
+  </Teleport>
 </template>
 
 <style scoped>
-/* Simple modal animations */
-.modal-enter-active {
-  transition: opacity 0.2s ease-out, transform 0.2s ease-out;
-}
-
+.modal-enter-active,
 .modal-leave-active {
-  transition: opacity 0.15s ease-in, transform 0.15s ease-in;
+  transition: opacity 0.3s ease;
 }
 
-.modal-enter-from {
-  opacity: 0;
-  transform: translateY(20px) scale(0.98);
-}
-
+.modal-enter-from,
 .modal-leave-to {
   opacity: 0;
-  transform: translateY(-10px) scale(0.99);
 }
 
-/* Simple scrollbar for modal content */
+.modal-enter-active .relative,
+.modal-leave-active .relative {
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.modal-enter-from .relative {
+  transform: scale(0.95) translateY(20px);
+}
+
+.modal-leave-to .relative {
+  transform: scale(0.95) translateY(-20px);
+}
+
 .overflow-y-auto::-webkit-scrollbar {
   width: 6px;
 }

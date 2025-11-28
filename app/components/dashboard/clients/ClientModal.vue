@@ -1,14 +1,14 @@
+<!-- components/dashboard/clients/ClientModal.vue -->
 <script setup>
-import { computed, onMounted, onUnmounted } from 'vue'
 import { XIcon } from 'lucide-vue-next'
-import InvoiceForm from './InvoiceForm.vue'
+import ClientForm from './ClientForm.vue'
 
 const props = defineProps({
   isOpen: {
     type: Boolean,
     required: true
   },
-  invoice: {
+  client: {
     type: Object,
     default: null
   },
@@ -18,46 +18,19 @@ const props = defineProps({
   }
 })
 
-const emit = defineEmits(['update:isOpen', 'close', 'submit'])
-
-const title = computed(() => {
-  return props.invoice ? 'Edit Invoice' : 'Create New Invoice'
-})
+const emit = defineEmits(['close', 'submit'])
 
 const handleClose = () => {
   if (!props.loading) {
-    emit('update:isOpen', false)
     emit('close')
   }
 }
 
 const handleSubmit = (formData) => {
-  emit('submit', {
-    ...formData,
-    number: props.invoice?.number || generateInvoiceNumber(),
-    date: props.invoice?.date || getTodayDate(),
-    dueDate: props.invoice?.dueDate || calculateDueDate()
-  })
+  emit('submit', formData)
 }
 
-const generateInvoiceNumber = () => {
-  const today = new Date()
-  const year = today.getFullYear()
-  const month = String(today.getMonth() + 1).padStart(2, '0')
-  const random = Math.floor(Math.random() * 1000).toString().padStart(3, '0')
-  return `INV-${year}-${month}-${random}`
-}
-
-const getTodayDate = () => {
-  return new Date().toISOString().split('T')[0]
-}
-
-const calculateDueDate = () => {
-  const today = new Date()
-  const dueDate = new Date(today.setMonth(today.getMonth() + 1))
-  return dueDate.toISOString().split('T')[0]
-}
-
+// Close modal on escape key
 onMounted(() => {
   const handleEscape = (e) => {
     if (e.key === 'Escape' && props.isOpen && !props.loading) {
@@ -75,16 +48,19 @@ onMounted(() => {
 <template>
   <Teleport to="body">
     <Transition name="modal">
-      <div v-if="isOpen" class="fixed inset-0 z-[9999] flex items-center justify-center p-4">
+      <div v-if="isOpen" class="fixed inset-0 z-50 flex items-center justify-center p-4">
+        <!-- Backdrop -->
         <div
-          class="fixed inset-0 bg-black bg-opacity-50"
+          class="absolute inset-0 bg-black bg-opacity-50"
           @click="handleClose"
         />
 
-        <div class="relative bg-white rounded-lg shadow-xl max-w-2xl w-full max-h-[90vh] overflow-hidden mx-4 z-[10000]">
+        <!-- Modal Content -->
+        <div class="relative bg-white rounded-lg shadow-xl max-w-2xl w-full max-h-[90vh] overflow-hidden mx-4">
+          <!-- Header -->
           <div class="sticky top-0 bg-white border-b border-gray-200 px-6 py-4 flex items-center justify-between">
             <h2 class="text-xl font-semibold text-gray-900">
-              {{ title }}
+              {{ client ? 'Edit Client' : 'Add New Client' }}
             </h2>
             <button
               @click="handleClose"
@@ -95,12 +71,11 @@ onMounted(() => {
             </button>
           </div>
 
+          <!-- Content -->
           <div class="overflow-y-auto max-h-[calc(90vh-80px)] p-6 pb-6">
-            <InvoiceForm
-              :invoice="invoice"
+            <ClientForm
+              :client="client"
               :loading="loading"
-              :generated-invoice-number="generateInvoiceNumber()"
-              :generated-date="getTodayDate()"
               @submit="handleSubmit"
               @cancel="handleClose"
             />
