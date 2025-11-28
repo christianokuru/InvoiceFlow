@@ -16,6 +16,8 @@
     "@nuxtjs/tailwindcss": "^6.14.0",
     "@pinia/nuxt": "^0.11.3",
     "bcryptjs": "^3.0.3",
+    "crypto-js": "^4.2.0",
+    "jsonwebtoken": "^9.0.2",
     "lucide-vue-next": "^0.554.0",
     "mongoose": "^9.0.0",
     "nuxt": "^4.2.1",

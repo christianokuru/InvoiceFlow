@@ -1,3 +1,4 @@
+// server/models/History.js
 import mongoose from 'mongoose'
 
 const historySchema = new mongoose.Schema({

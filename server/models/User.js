@@ -1,4 +1,5 @@
 import mongoose from 'mongoose'
+import bcrypt from 'bcryptjs'
 
 const userSchema = new mongoose.Schema({
   // Basic user information
@@ -25,7 +26,6 @@ const userSchema = new mongoose.Schema({
     trim: true,
     validate: {
       validator: function(phone) {
-        // Optional phone field with international validation (7-15 digits, optional +)
         if (!phone) return true
         const cleaned = phone.replace(/\s+/g, '').replace(/[^\d+]/g, '')
         return /^[+]?\d{7,15}$/.test(cleaned)
@@ -102,7 +102,7 @@ const userSchema = new mongoose.Schema({
       country: {
         type: String,
         trim: true,
-        maxlength: 2 // ISO country codes
+        maxlength: 2
       },
       postalCode: {
         type: String,
@@ -256,7 +256,7 @@ const userSchema = new mongoose.Schema({
     currency: {
       type: String,
       default: 'NGN',
-      maxlength: 3 // ISO currency codes
+      maxlength: 3
     },
     dateFormat: {
       type: String,
@@ -330,10 +330,6 @@ const userSchema = new mongoose.Schema({
     type: Boolean,
     default: true
   },
-  emailVerified: {
-    type: Boolean,
-    default: false
-  },
   lastLogin: {
     type: Date
   },
@@ -372,13 +368,18 @@ userSchema.index({ createdAt: -1 })
 userSchema.index({ 'business.name': 1 })
 userSchema.index({ 'business.type': 1 })
 
-// Middleware
-userSchema.pre('save', function(next) {
-  if (this.isModified('lastLogin')) {
+// Middleware - Fixed to use async/await properly
+userSchema.pre('save', async function() {
+  // Only increment login count if lastLogin is being modified AND this is not a new document
+  if (this.isModified('lastLogin') && !this.isNew) {
     this.loginCount = (this.loginCount || 0) + 1
   }
-  next()
 })
+
+// Password comparison method
+userSchema.methods.comparePassword = async function(candidatePassword) {
+  return bcrypt.compare(candidatePassword, this.password)
+}
 
 // Static methods
 userSchema.statics.findByEmail = function(email) {

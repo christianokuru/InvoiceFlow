@@ -1,3 +1,4 @@
+// server/utils/errors.js
 export class DatabaseError extends Error {
   constructor(message, code = 'DATABASE_ERROR', statusCode = 500, details = {}) {
     super(message)
