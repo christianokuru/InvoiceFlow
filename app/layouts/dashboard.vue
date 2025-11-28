@@ -11,7 +11,7 @@
     <!-- Main Content Area -->
     <div class="flex flex-col flex-1 overflow-hidden">
       <!-- Navbar -->
-      <Navbar :user-name="userName" @notification-click="handleNotificationClick" @user-menu-click="handleUserMenuClick" />
+      <Navbar :user-name="userName" :user-email="userEmail" @notification-click="handleNotificationClick" @user-menu-click="handleUserMenuClick" />
 
       <!-- Page Content with transitions -->
       <main class="flex-1 overflow-y-auto p-4 md:p-6">
@@ -24,8 +24,9 @@
 </template>
 
 <script setup>
-import { ref, watch } from 'vue'
+import { ref, computed, watch } from 'vue'
 import { useRoute, useRouter } from '#app'
+import { useAuth } from '~/composables/useAuth'
 import Sidebar from '~/components/layout/Sidebar.vue'
 import Navbar from '~/components/layout/Navbar.vue'
 
@@ -34,7 +35,19 @@ const router = useRouter()
 
 const sidebarExpanded = ref(true)
 const activeView = ref('dashboard')
-const userName = ref('John Doe')
+
+// Get user data from auth
+const { user } = useAuth()
+
+const userName = computed(() => {
+  return user.value?.firstName && user.value?.lastName
+    ? `${user.value.firstName} ${user.value.lastName}`
+    : user.value?.email?.split('@')[0] || 'John Doe'
+})
+
+const userEmail = computed(() => {
+  return user.value?.email || 'user@example.com'
+})
 
 // Sync activeView with current route
 const updateActiveViewFromRoute = () => {
@@ -51,6 +64,8 @@ const updateActiveViewFromRoute = () => {
     activeView.value = 'copy'
   } else if (path.includes('/dashboard/clients')) {
     activeView.value = 'clients'
+  } else if (path.includes('/dashboard/settings')) {
+    activeView.value = 'settings'
   } else {
     activeView.value = 'dashboard'
   }

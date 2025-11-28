@@ -175,20 +175,20 @@ This document tracks all development tasks for the InvoiceFlow SaaS application 
 - [ ] ✅ Create reporting interface UI
 
 ### 2.12 State Management & Composables
-- [ ] ⏳ Create Pinia stores (/stores/)
-  - [ ] ⏳ Auth store for user authentication
-  - [ ] ⏳ Invoices store for invoice management
-  - [ ] ⏳ Receipts store for receipt management
-  - [ ] ⏳ Clients store for client management
-  - [ ] ⏳ UI store for interface state
-- [ ] ⏳ Create composables (/composables/)
-  - [ ] ⏳ useAuth composable for authentication
-  - [ ] ⏳ useInvoices composable for invoice operations
-  - [ ] ⏳ useReceipts composable for receipt operations
-  - [ ] ⏳ useClients composable for client operations
-  - [ ] ⏳ useNotifications composable for notifications
-  - [ ] ⏳ usePaystack composable for payments
-  - [ ] ⏳ useLocalStorage composable for local storage
+- [ ] ✅ Create Pinia stores (/stores/)
+  - [ ] ✅ Auth store for user authentication
+  - [ ] ✅ Invoices store for invoice management
+  - [ ] ✅ Receipts store for receipt management
+  - [ ] ✅ Clients store for client management
+  - [ ] ✅ UI store for interface state
+- [ ] ✅ Create composables (/composables/)
+  - [ ] ✅ useAuth composable for authentication
+  - [ ] ✅ useInvoices composable for invoice operations
+  - [ ] ✅ useReceipts composable for receipt operations
+  - [ ] ✅ useClients composable for client operations
+  - [ ] ✅ useNotifications composable for notifications
+  - [ ] ✅ usePaystack composable for payments
+  - [ ] ✅ useLocalStorage composable for local storage
 
 ---
 
