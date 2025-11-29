@@ -274,7 +274,7 @@ To become the most intuitive and affordable invoice/receipt management solution 
 - **Database**: MongoDB with Mongoose ODM
 - **Authentication**: JWT tokens with refresh mechanism
 - **File Storage**: Local filesystem or MongoDB GridFS for document storage
-- **Email Service**: SendGrid or similar for transactional emails
+- **Email Service**: Resend for transactional emails
 - **Payment Processing**: Paystack for subscription management
 
 ### System Architecture
@@ -289,7 +289,7 @@ To become the most intuitive and affordable invoice/receipt management solution 
          ▼                       ▼                       ▼
 ┌─────────────────┐    ┌─────────────────┐    ┌─────────────────┐
 │   Email Service │    │   File Storage  │    │  Payment Service│
-│   (SendGrid)    │    │  (GridFS/Local) │    │    (Paystack)   │
+│     (Resend)    │    │  (GridFS/Local) │    │    (Paystack)   │
 └─────────────────┘    └─────────────────┘    └─────────────────┘
 ```
 

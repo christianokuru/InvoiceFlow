@@ -265,7 +265,7 @@ This document tracks all development tasks for the InvoiceFlow SaaS application 
 - [ ] ⏳ Create client import/export API
 
 ### 4.6 External Services Integration Backend
-- [ ] ⏳ Set up SendGrid email service integration
+- [ ] ⏳ Set up Resend email service integration
 - [ ] ⏳ Configure Paystack payment processing
 - [ ] ⏳ Implement PDF generation service
 - [ ] ⏳ Set up file storage (GridFS or local)

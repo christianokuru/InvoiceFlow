@@ -1,4 +1,3 @@
-// server/api/auth/forgot-password.post.js
 import mongoose from 'mongoose'
 import User from '../../models/User'
 import History from '../../models/History'
@@ -10,18 +9,17 @@ import {
   AUTH_ERRORS
 } from '../../utils/auth'
 import { asyncHandler, withDatabaseErrorHandling } from '../../utils/errors'
+import { sendPasswordResetEmail } from '../../utils/email'
 
 export default defineEventHandler(async (event) => {
   return asyncHandler(async () => {
     try {
       const body = await readBody(event)
 
-      // Validate required field
       validateRequired(body, ['email'])
 
       const { email } = body
 
-      // Validate email format
       const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/
       if (!emailRegex.test(email)) {
         throw createError({
@@ -37,13 +35,11 @@ export default defineEventHandler(async (event) => {
         })
       }
 
-      // Find user by email
       const user = await withDatabaseErrorHandling(
         () => User.findByEmail(email.toLowerCase().trim()),
         'user lookup'
       )
 
-      // Always return success to prevent email enumeration attacks
       if (!user) {
         console.log(`Password reset requested for non-existent email: ${email}`)
         return {
@@ -59,7 +55,6 @@ export default defineEventHandler(async (event) => {
         }
       }
 
-      // Check if user account is active
       if (!user.isActive) {
         console.log(`Password reset requested for inactive account: ${email}`)
         return {
@@ -75,7 +70,6 @@ export default defineEventHandler(async (event) => {
         }
       }
 
-      // Check if there's already a recent password reset request
       if (user.passwordResetExpires && !isTokenExpired(user.passwordResetExpires)) {
         throw createError({
           statusCode: 429,
@@ -93,32 +87,43 @@ export default defineEventHandler(async (event) => {
         })
       }
 
-      // Generate password reset token
       const resetTokenData = generatePasswordResetToken(user._id)
 
-      // Store hashed token and expiration in user document
       await User.findByIdAndUpdate(user._id, {
         passwordResetToken: hashToken(resetTokenData.token),
         passwordResetExpires: resetTokenData.expiresAt
       })
 
-      // Get client info for tracking
       const clientInfo = {
         ipAddress: event.node.req.socket.remoteAddress || 'unknown',
         userAgent: event.node.req.headers['user-agent'] || 'unknown'
       }
 
-      // Log password reset request
       await History.createUserActivity(user._id, 'password-reset', {
         action: 'requested',
         ipAddress: clientInfo.ipAddress,
         userAgent: clientInfo.userAgent
       })
 
-      // Send password reset email (in production, this would use SendGrid)
-      // TODO: Implement email service
-      const resetLink = `${process.env.NUXT_PUBLIC_APP_URL}/auth/reset-password?token=${resetTokenData.token}&email=${encodeURIComponent(email)}`
-      console.log(`Password reset link for ${email}: ${resetLink}`)
+      try {
+        await sendPasswordResetEmail(email, resetTokenData.token, user.name)
+        console.log(`Password reset email sent successfully to ${email}`)
+      } catch (emailError) {
+        console.error('Failed to send password reset email:', emailError)
+        
+        throw createError({
+          statusCode: 500,
+          statusMessage: 'EMAIL_SEND_ERROR',
+          data: {
+            success: false,
+            error: {
+              code: 'EMAIL_SEND_ERROR',
+              message: 'Failed to send password reset email. Please try again or contact support.',
+              timestamp: new Date().toISOString()
+            }
+          }
+        })
+      }
 
       return {
         success: true,
@@ -134,15 +139,12 @@ export default defineEventHandler(async (event) => {
       }
 
     } catch (error) {
-      // If error already has the expected format, re-throw it
       if (error.statusCode && error.data) {
         throw error
       }
 
-      // Log the actual error for debugging
       console.error('Forgot password error:', error)
 
-      // Handle other errors
       throw createError({
         statusCode: 500,
         statusMessage: 'PASSWORD_RESET_ERROR',

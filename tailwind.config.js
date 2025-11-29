@@ -1,3 +1,4 @@
+// tailwind.config.js
 export default {
   content: [
     "./app/**/*.{js,vue,ts}",
