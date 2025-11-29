@@ -1,4 +1,7 @@
+// server/api/auth/logout.post.js
+import mongoose from 'mongoose'
 import User from '../../models/User'
+import History from '../../models/History'
 import { asyncHandler, withDatabaseErrorHandling } from '../../utils/errors'
 
 export default defineEventHandler(async (event) => {
@@ -23,12 +26,11 @@ export default defineEventHandler(async (event) => {
 
       // Get client info for tracking
       const clientInfo = {
-        ipAddress: getClientIP(event) || '',
-        userAgent: getHeader(event, 'user-agent') || ''
+        ipAddress: event.node.req.socket.remoteAddress || 'unknown',
+        userAgent: event.node.req.headers['user-agent'] || 'unknown'
       }
 
       // Log logout activity
-      const History = mongoose.model('History')
       await History.createUserActivity(user._id, 'logged-out', {
         ipAddress: clientInfo.ipAddress,
         userAgent: clientInfo.userAgent
@@ -57,6 +59,9 @@ export default defineEventHandler(async (event) => {
       if (error.statusCode && error.data) {
         throw error
       }
+
+      // Log the actual error for debugging
+      console.error('Logout error:', error)
 
       // Handle other errors
       throw createError({

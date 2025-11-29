@@ -179,6 +179,12 @@ export const createErrorResponse = (error, context = 'api') => {
 export const asyncHandler = (fn) => {
   return (event) => {
     return Promise.resolve(fn(event)).catch(error => {
+      // If error already has the expected format from createError, re-throw it
+      if (error.statusCode && error.data) {
+        throw error
+      }
+
+      // Handle other unexpected errors
       const handledError = handleDatabaseError(error)
       throw createError({
         statusCode: handledError.statusCode,
@@ -194,6 +200,12 @@ export const withDatabaseErrorHandling = async (operation, context = 'database o
   try {
     return await operation()
   } catch (error) {
+    // If error already has the expected format from createError, re-throw it
+    if (error.statusCode && error.data) {
+      throw error
+    }
+
+    // Handle other unexpected errors
     throw handleDatabaseError(error, context)
   }
 }
@@ -206,11 +218,18 @@ export const validateRequired = (data, requiredFields) => {
   })
 
   if (missing.length > 0) {
-    throw new ValidationError(
-      `Missing required fields: ${missing.join(', ')}`,
-      'required_fields',
-      missing
-    )
+    throw createError({
+      statusCode: 400,
+      statusMessage: 'VALIDATION_ERROR',
+      data: {
+        success: false,
+        error: {
+          code: 'VALIDATION_ERROR',
+          message: `Missing required fields: ${missing.join(', ')}`,
+          details: { missingFields: missing }
+        }
+      }
+    })
   }
 
   return true

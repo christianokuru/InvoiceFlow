@@ -1,4 +1,7 @@
+// server/api/auth/login.post.js
+import mongoose from 'mongoose'
 import User from '../../models/User'
+import History from '../../models/History'
 import { validateRequired } from '../../utils/errors'
 import {
   generateTokenPair,
@@ -89,30 +92,28 @@ export default defineEventHandler(async (event) => {
         })
       }
 
-      // Update last login and login count
+      // Update last login (loginCount will be automatically incremented by middleware)
       const loginInfo = {
-        lastLogin: new Date(),
-        loginCount: (user.loginCount || 0) + 1
+        lastLogin: new Date()
       }
 
       // Get client info for session tracking
       const clientInfo = {
-        ipAddress: getClientIP(event) || '',
-        userAgent: getHeader(event, 'user-agent') || ''
+        ipAddress: event.node.req.socket.remoteAddress || 'unknown',
+        userAgent: event.node.req.headers['user-agent'] || 'unknown'
       }
 
-      // Update user with login information
-      await User.findByIdAndUpdate(user._id, loginInfo, { new: true })
+      // Update user with login information and get the updated user
+      const updatedUser = await User.findByIdAndUpdate(user._id, loginInfo, { new: true })
 
       // Generate tokens
-      const tokens = generateTokenPair(user)
+      const tokens = generateTokenPair(updatedUser)
 
       // Create session info
-      const sessionInfo = createSessionInfo(user, clientInfo)
+      const sessionInfo = createSessionInfo(updatedUser, clientInfo)
 
       // Log login activity
-      const History = mongoose.model('History')
-      await History.createUserActivity(user._id, 'logged-in', {
+      await History.createUserActivity(updatedUser._id, 'logged-in', {
         ipAddress: clientInfo.ipAddress,
         userAgent: clientInfo.userAgent,
         rememberMe,
@@ -120,9 +121,8 @@ export default defineEventHandler(async (event) => {
       })
 
       // Prepare user response (without sensitive data)
-      const userResponse = user.toJSON()
-      userResponse.lastLogin = loginInfo.lastLogin
-      userResponse.loginCount = loginInfo.loginCount
+      const userResponse = updatedUser.toJSON()
+      delete userResponse.password
 
       return {
         success: true,
@@ -143,6 +143,9 @@ export default defineEventHandler(async (event) => {
       if (error.statusCode && error.data) {
         throw error
       }
+
+      // Log the actual error for debugging
+      console.error('Login error:', error)
 
       // Handle other errors
       throw createError({

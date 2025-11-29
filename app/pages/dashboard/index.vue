@@ -1,36 +1,3 @@
-<template>
-  <div class="space-y-6">
-    <!-- Page Header -->
-    <div>
-      <h1 class="text-2xl font-semibold text-gray-900">Dashboard</h1>
-      <p class="mt-1 text-sm text-gray-500">
-        Manage your invoices and receipts
-      </p>
-    </div>
-
-    <!-- Stats Grid -->
-    <DashboardStats :stats="dashboardStats" />
-
-    <!-- Analytics Section -->
-    <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
-      <RevenueChart
-        title="Monthly Revenue"
-        :data="monthlyRevenue"
-      />
-      <PieChart
-        title="Activity Breakdown"
-        :data="activityData"
-      />
-    </div>
-
-    <!-- Bottom Section -->
-    <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
-      <RecentActivity />
-      <QuickActions />
-    </div>
-  </div>
-</template>
-
 <script setup>
 import DashboardStats from '~/components/dashboard/shared/DashboardStats.vue'
 import RevenueChart from '~/components/dashboard/analytics/RevenueChart.vue'
@@ -84,4 +51,69 @@ const activityData = [
   { type: 'email', value: 8, percentage: 9 },
   { type: 'payment', value: 4, percentage: 4 }
 ]
+
+// Recent activities data
+const recentActivities = [
+  {
+    icon: 'invoice',
+    type: 'invoice',
+    title: 'Invoice #1234 created',
+    time: '2 hours ago',
+    amount: '$1,234.56'
+  },
+  {
+    icon: 'receipt',
+    type: 'receipt',
+    title: 'Receipt #5678 generated',
+    time: '4 hours ago',
+    amount: '$890.00'
+  },
+  {
+    icon: 'email',
+    type: 'email',
+    title: 'Invoice sent to client',
+    time: '1 day ago',
+    amount: '$2,450.00'
+  },
+  {
+    icon: 'payment',
+    type: 'payment',
+    title: 'Payment received',
+    time: '2 days ago',
+    amount: '$3,200.00'
+  }
+]
 </script>
+
+<template>
+  <div class="space-y-6">
+    <!-- Page Header -->
+    <div>
+      <h1 class="text-2xl font-semibold text-gray-900">Dashboard</h1>
+      <p class="mt-1 text-sm text-gray-500">
+        Manage your invoices and receipts
+      </p>
+    </div>
+
+    <!-- Stats Grid -->
+    <DashboardStats :stats="dashboardStats" />
+
+    <!-- Analytics Section -->
+    <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+      <RevenueChart
+        title="Monthly Revenue"
+        :data="monthlyRevenue"
+      />
+      <PieChart
+        title="Activity Breakdown"
+        :data="activityData"
+      />
+    </div>
+
+    <!-- Bottom Section -->
+    <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+      <RecentActivity :activities="recentActivities" />
+      <QuickActions />
+    </div>
+  </div>
+</template>

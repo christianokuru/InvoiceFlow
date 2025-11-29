@@ -54,7 +54,8 @@ const userSchema = new mongoose.Schema({
         'corporation',
         'nonprofit',
         'government',
-        'enterprise'
+        'enterprise',
+        'others'
       ]
     },
     rcNumber: {
@@ -336,6 +337,9 @@ const userSchema = new mongoose.Schema({
   loginCount: {
     type: Number,
     default: 0
+  },
+  lastActivity: {
+    type: Date
   }
 }, {
   timestamps: true,
@@ -368,11 +372,26 @@ userSchema.index({ createdAt: -1 })
 userSchema.index({ 'business.name': 1 })
 userSchema.index({ 'business.type': 1 })
 
-// Middleware - Fixed to use async/await properly
+// Middleware for .save() method
 userSchema.pre('save', async function() {
   // Only increment login count if lastLogin is being modified AND this is not a new document
-  if (this.isModified('lastLogin') && !this.isNew) {
+  // AND we're not already in the process of updating loginCount
+  if (this.isModified('lastLogin') && !this.isNew && !this.isModified('loginCount')) {
     this.loginCount = (this.loginCount || 0) + 1
+  }
+})
+
+// Middleware for findOneAndUpdate and findByIdAndUpdate
+userSchema.pre('findOneAndUpdate', function() {
+  const update = this.getUpdate()
+  
+  // Check if lastLogin is being updated (either directly or via $set)
+  if (update.lastLogin || update.$set?.lastLogin) {
+    // Increment loginCount by 1
+    if (!update.$inc) {
+      update.$inc = {}
+    }
+    update.$inc.loginCount = 1
   }
 })
 
