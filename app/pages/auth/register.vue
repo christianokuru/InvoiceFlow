@@ -1,15 +1,5 @@
-<!-- pages/auth/register.vue  -->
-<template>
-  <div class="w-full max-w-md mx-auto">
-    <!-- Register Form Component -->
-    <RegisterForm
-      @success="handleRegisterSuccess"
-      @error="handleRegisterError"
-    />
-  </div>
-</template>
-
 <script setup>
+import { useAuthStore } from '../../../stores/auth'
 import { useRouter } from 'vue-router'
 import RegisterForm from '~/components/auth/RegisterForm.vue'
 
@@ -17,21 +7,27 @@ definePageMeta({
   layout: 'auth'
 })
 
+const authStore = useAuthStore()
 const router = useRouter()
 
-const handleRegisterSuccess = async (data) => {
-  // In a real app, you would handle registration and authentication here
-  console.log('Registration successful:', data)
-
-  // Show success message and redirect to login
+const handleRegisterSuccess = async () => {
+  console.log('Registration successful, user authenticated')
+  
   setTimeout(() => {
-    router.push('/auth/login')
-  }, 2000)
+    router.push('/dashboard')
+  }, 1000)
 }
 
-
 const handleRegisterError = (error) => {
-  // Error is already handled by the RegisterForm component with toasts
   console.error('Registration error:', error)
 }
 </script>
+
+<template>
+  <div class="w-full max-w-md mx-auto">
+    <RegisterForm
+      @success="handleRegisterSuccess"
+      @error="handleRegisterError"
+    />
+  </div>
+</template>

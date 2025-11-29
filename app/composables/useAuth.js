@@ -1,3 +1,4 @@
+// app/composables/useAuth.js
 import { useAuthStore } from '../../stores/auth'
 import { useRouter, useRoute } from '#app'
 import { computed } from 'vue'

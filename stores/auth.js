@@ -1,42 +1,46 @@
 import { ref, computed, readonly } from 'vue'
 
 export const useAuthStore = defineStore('auth', () => {
-  // State
   const user = ref(null)
-  const token = ref(null)
+  const accessToken = ref(null)
   const refreshToken = ref(null)
+  const session = ref(null)
   const isAuthenticated = ref(false)
   const loading = ref(false)
   const error = ref(null)
 
-  // Getters
   const currentUser = computed(() => user.value)
-  const isLoggedIn = computed(() => isAuthenticated.value && !!token.value)
+  const isLoggedIn = computed(() => isAuthenticated.value && !!accessToken.value)
   const authError = computed(() => error.value)
 
-  // Actions
   const login = async (credentials) => {
     loading.value = true
     error.value = null
 
     try {
-      const { data } = await $fetch('/api/auth/login', {
+      const response = await $fetch('/api/auth/login', {
         method: 'POST',
         body: credentials
       })
 
-      user.value = data.user
-      token.value = data.token
-      refreshToken.value = data.refreshToken
-      isAuthenticated.value = true
+      if (response.success) {
+        user.value = response.data.user
+        accessToken.value = response.data.tokens.accessToken
+        refreshToken.value = response.data.tokens.refreshToken
+        session.value = response.data.session
+        isAuthenticated.value = true
 
-      // Store tokens in localStorage
-      localStorage.setItem('auth_token', data.token)
-      localStorage.setItem('refresh_token', data.refreshToken)
+        if (import.meta.client) {
+          localStorage.setItem('accessToken', response.data.tokens.accessToken)
+          localStorage.setItem('refreshToken', response.data.tokens.refreshToken)
+          localStorage.setItem('user', JSON.stringify(response.data.user))
+        }
 
-      return { success: true, data }
+        return { success: true, data: response.data }
+      }
     } catch (err) {
-      error.value = err.message || 'Login failed'
+      error.value = err.data?.error?.message || 'Login failed'
+      isAuthenticated.value = false
       throw err
     } finally {
       loading.value = false
@@ -48,23 +52,28 @@ export const useAuthStore = defineStore('auth', () => {
     error.value = null
 
     try {
-      const { data } = await $fetch('/api/auth/register', {
+      const response = await $fetch('/api/auth/register', {
         method: 'POST',
         body: userData
       })
 
-      user.value = data.user
-      token.value = data.token
-      refreshToken.value = data.refreshToken
-      isAuthenticated.value = true
+      if (response.success) {
+        user.value = response.data.user
+        accessToken.value = response.data.tokens.accessToken
+        refreshToken.value = response.data.tokens.refreshToken
+        isAuthenticated.value = true
 
-      // Store tokens in localStorage
-      localStorage.setItem('auth_token', data.token)
-      localStorage.setItem('refresh_token', data.refreshToken)
+        if (import.meta.client) {
+          localStorage.setItem('accessToken', response.data.tokens.accessToken)
+          localStorage.setItem('refreshToken', response.data.tokens.refreshToken)
+          localStorage.setItem('user', JSON.stringify(response.data.user))
+        }
 
-      return { success: true, data }
+        return { success: true, data: response.data }
+      }
     } catch (err) {
-      error.value = err.message || 'Registration failed'
+      error.value = err.data?.error?.message || 'Registration failed'
+      isAuthenticated.value = false
       throw err
     } finally {
       loading.value = false
@@ -75,27 +84,29 @@ export const useAuthStore = defineStore('auth', () => {
     loading.value = true
 
     try {
-      if (token.value) {
+      if (accessToken.value) {
         await $fetch('/api/auth/logout', {
           method: 'POST',
           headers: {
-            'Authorization': `Bearer ${token.value}`
+            'Authorization': `Bearer ${accessToken.value}`
           }
+        }).catch(err => {
+          console.warn('Logout API call failed:', err)
         })
       }
-    } catch (err) {
-      console.error('Logout error:', err)
     } finally {
-      // Clear state regardless of API call success
       user.value = null
-      token.value = null
+      accessToken.value = null
       refreshToken.value = null
+      session.value = null
       isAuthenticated.value = false
       error.value = null
 
-      // Clear localStorage
-      localStorage.removeItem('auth_token')
-      localStorage.removeItem('refresh_token')
+      if (import.meta.client) {
+        localStorage.removeItem('accessToken')
+        localStorage.removeItem('refreshToken')
+        localStorage.removeItem('user')
+      }
 
       loading.value = false
     }
@@ -107,36 +118,52 @@ export const useAuthStore = defineStore('auth', () => {
     }
 
     try {
-      const { data } = await $fetch('/api/auth/refresh', {
+      const response = await $fetch('/api/auth/refresh', {
         method: 'POST',
         body: { refreshToken: refreshToken.value }
       })
 
-      token.value = data.token
-      refreshToken.value = data.refreshToken
+      if (response.success) {
+        accessToken.value = response.data.tokens.accessToken
+        refreshToken.value = response.data.tokens.refreshToken
 
-      localStorage.setItem('auth_token', data.token)
-      localStorage.setItem('refresh_token', data.refreshToken)
+        if (import.meta.client) {
+          localStorage.setItem('accessToken', response.data.tokens.accessToken)
+          localStorage.setItem('refreshToken', response.data.tokens.refreshToken)
+        }
 
-      return { success: true, data }
+        return { success: true, data: response.data }
+      }
     } catch (err) {
-      // If refresh fails, logout the user
       await logout()
       throw err
     }
   }
 
   const initializeAuth = () => {
-    const storedToken = localStorage.getItem('auth_token')
-    const storedRefreshToken = localStorage.getItem('refresh_token')
+    if (import.meta.client) {
+      const storedAccessToken = localStorage.getItem('accessToken')
+      const storedRefreshToken = localStorage.getItem('refreshToken')
+      const storedUser = localStorage.getItem('user')
 
-    if (storedToken && storedRefreshToken) {
-      token.value = storedToken
-      refreshToken.value = storedRefreshToken
-      isAuthenticated.value = true
+      if (storedAccessToken && storedRefreshToken && storedUser) {
+        try {
+          accessToken.value = storedAccessToken
+          refreshToken.value = storedRefreshToken
+          user.value = JSON.parse(storedUser)
+          isAuthenticated.value = true
+        } catch (err) {
+          console.error('Failed to parse stored user data:', err)
+          logout()
+        }
+      }
+    }
+  }
 
-      // Optionally verify token with backend
-      // This would be implemented based on your backend API
+  const setUser = (userData) => {
+    user.value = userData
+    if (import.meta.client && userData) {
+      localStorage.setItem('user', JSON.stringify(userData))
     }
   }
 
@@ -145,25 +172,22 @@ export const useAuthStore = defineStore('auth', () => {
   }
 
   return {
-    // State
     user: readonly(user),
-    token: readonly(token),
+    accessToken: readonly(accessToken),
     refreshToken: readonly(refreshToken),
+    session: readonly(session),
     isAuthenticated: readonly(isAuthenticated),
     loading: readonly(loading),
     error: readonly(error),
-
-    // Getters
     currentUser,
     isLoggedIn,
     authError,
-
-    // Actions
     login,
     register,
     logout,
     refreshAuthToken,
     initializeAuth,
+    setUser,
     clearError
   }
 })
